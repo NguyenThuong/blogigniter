@@ -38,11 +38,36 @@
 |
 */
 
-$route['default_controller'] = "blog";
-$route['404_override'] = '';
+$route['default_controller'] = 'front/blog';
 
-$route['(:any)'] = "blog/view/$1";
-$route['(:any)/(:any)'] = "blog/view/$1/$2";
+#admin
+$route['admin']           = 'admin/admin';
+$route['admin/logout'] 	  = 'admin/admin/logout';
+$route['admin/dashboard'] = 'admin/dashboard';
+
+# ADMIN content
+$route['admin/dashboard/edit'] 			= 'admin/dashboard/edit';
+$route['admin/dashboard/edit/(:num)'] 	= 'admin/dashboard/edit/$1';
+$route['admin/dashboard/delete/(:num)'] = 'admin/dashboard/delete/$1';
+
+# ADMIN rubric
+$route['admin/dashboard/rubric'] 			   = 'admin/dashboard/rubric';
+$route['admin/dashboard/edit_rubric'] 		   = 'admin/dashboard/edit_rubric';
+$route['admin/dashboard/edit_rubric/(:num)']   = 'admin/dashboard/edit_rubric/$1';
+$route['admin/dashboard/delete_rubric/(:num)'] = 'admin/dashboard/delete_rubric/$1';
+
+# 404
+$route['erreur404'] 	= $route['default_controller'] . '/erreur404';
+
+# pagination home
+$route['page/(:num)'] 	= $route['default_controller'] . '/index/$1';
+
+# rubrique
+$route['(:any)']        = $route['default_controller'] . '/view/$1';
+
+# rubrique + content
+$route['(:any)/(:any)'] = $route['default_controller'] . '/view/$1/$2';
+
 
 
 /* End of file routes.php */
