@@ -6,13 +6,15 @@ class Dashboard extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->database();
-		$this->load->model('admin/model_admin');
+		$this->load->model(array('model_content', 'model_rubric', 'model_user'));
 		$this->load->library(array('form_validation', 'session'));
 		$this->load->helper(array('functions', 'text', 'url'));
 		define('URL_LAYOUT'      , 'admin/view_dashboard');
 		define('URL_HOME_CONTENT', 'admin/dashboard');
 		define('URL_HOME_RUBRIC' , 'admin/dashboard/rubric');
+		define('URL_HOME_USERS'  , 'admin/dashboard/users');
 		session_start();
+		$this->output->enable_profiler(TRUE);
 	}
 
 	// Obtenir le login
@@ -21,6 +23,14 @@ class Dashboard extends CI_Controller {
 		$data = $this->session->userdata('logged_in');
 
 		return $data['login'];
+	}
+
+	// Obtenir le niveau d'accréditation
+	private function get_level()
+	{
+		$data = $this->session->userdata('logged_in');
+
+		return $data['level'];
 	}
 
 	// Obtenir la redirection
@@ -40,7 +50,7 @@ class Dashboard extends CI_Controller {
 
 			$data['page']  = 'home';
 			$data['title'] = 'Ma dashboard';
-			$data['query'] = $this->model_admin->read_content();
+			$data['query'] = $this->model_content->get_contents();
 
 			$this->load->view(URL_LAYOUT, $data);
 
@@ -58,7 +68,7 @@ class Dashboard extends CI_Controller {
 			$data['login'] = $this->get_login();
 
 			// Chargement des rubriques
-			$data['rubrics'] = $this->model_admin->read_rubric();
+			$data['rubrics'] = $this->model_rubric->get_rubrics();
 			
 			// Mise en place du formulaire
 			$this->form_validation->set_rules('c_title', 'Titre', 'trim|required');
@@ -79,22 +89,30 @@ class Dashboard extends CI_Controller {
 				$c_url_rw = url_title(convert_accented_characters($c_title), '-', TRUE);
 
 				if ($this->form_validation->run() !== FALSE):
-					$this->model_admin->create_content($r_id, $c_title, $c_content, $c_url_rw);
+					$this->model_content->create_content($r_id, $c_title, $c_content, $c_url_rw);
 					$this->session->set_flashdata('success', 'Article "' . $c_title . '" ajouté.');
 					redirect(URL_HOME_CONTENT);
 				endif;
 
 			else:
-				$data['page']  	   = 'edit_content';
-				$row 			   = $this->model_admin->get_content($c_id)->row();
-				$data['r_id']	   = $row->r_id;
-				$data['c_title']   = $row->c_title;
-				$data['c_content'] = $row->c_content;
-				$data['title']	   = 'Modifer la rubrique ' . $data['c_title'];
+				$get_content = $this->model_content->get_content($c_id);
+				// Vérification de l'id
+				if ($get_content->num_rows() == 1):
+					$data['page']  	   = 'edit_content';
+					$row 			   = $get_content->row();
+					$data['r_id']	   = $row->r_id;
+					$data['c_title']   = $row->c_title;
+					$data['c_content'] = $row->c_content;
+					$data['title']	   = 'Modifer l\'article ' . $data['c_title'];
 
-				if ($this->form_validation->run() !== FALSE):
-					$this->model_admin->update_content($r_id, $c_title, $c_content, $c_id);
-					$this->session->set_flashdata('success', 'Article "' . $c_title . '" modifié.');
+					if ($this->form_validation->run() !== FALSE):
+						$this->model_content->update_content($r_id, $c_title, $c_content, $c_id);
+						$this->session->set_flashdata('success', 'Article "' . $c_title . '" modifié.');
+						redirect(URL_HOME_CONTENT);
+					endif;
+
+				else:
+					$this->session->set_flashdata('alert', 'Cette article n\'existe pas ou n\'a jamais existé');
 					redirect(URL_HOME_CONTENT);
 				endif;
 
@@ -113,8 +131,8 @@ class Dashboard extends CI_Controller {
 		if ($this->session->userdata('logged_in')):
 
 			// Si l'utilisateur existe, on peut le supprimer
-			if ($this->model_admin->get_content($id)->num_rows() == 1):
-				$this->model_admin->delete_content($id);
+			if ($this->model_content->get_content($id)->num_rows() == 1):
+				$this->model_content->delete_content($id);
 				$this->session->set_flashdata('success', 'L\'article a bien été supprimé');
 				redirect(base_url('admin'));
 
@@ -140,10 +158,9 @@ class Dashboard extends CI_Controller {
 			$data['page']  = 'rubric';
 			$data['title'] = 'Rubriques';
 
-			$data['query'] = $this->model_admin->read_rubric();
+			$data['query'] = $this->model_rubric->get_rubrics();
 
 			$this->load->view(URL_LAYOUT, $data);
-
 
 		else:
 			$this->get_redirect();
@@ -175,22 +192,31 @@ class Dashboard extends CI_Controller {
 				$r_url_rw = url_title(convert_accented_characters($r_title), '-', TRUE);
 
 				if ($this->form_validation->run() !== FALSE):
-					$this->model_admin->create_rubric($r_title, $r_description, $r_url_rw);
+					$this->model_rubric->create_rubric($r_title, $r_description, $r_url_rw);
 					$this->session->set_flashdata('success', 'Rubrique "' . $r_title . '" ajoutée');
  					redirect(base_url(URL_HOME_RUBRIC));
 				endif;
 
 			else:
-				$data['page']  		   = 'edit_rubric';
-				$row 		   		   = $this->model_admin->get_rubric($r_id)->row();
-				$data['r_title']	   = $row->r_title;
-				$data['r_description'] = $row->r_description;
-				$data['title'] 		   = 'Mofidifer la rubrique ' . $data['r_title'];
+				$get_content = $this->model_rubric->get_rubric($r_id);
+				// Vérification de l'id
+				if ($get_content->num_rows() == 1):
+					$data['page']  		   = 'edit_rubric';
+					$data['content']	   = $this->model_content->get_content_by_rubric($r_id);
+					$row 		   		   = $get_content->row();
+					$data['r_title']	   = $row->r_title;
+					$data['r_description'] = $row->r_description;
+					$data['title'] 		   = 'Modifier la rubrique ' . $data['r_title'];
 
-				if($this->form_validation->run() !== FALSE):
-					$this->model_admin->update_rubric($r_title, $r_description, $r_id);
-					$this->session->set_flashdata('success', 'Catégorie "' . $r_title . '" modifiée.');
-					redirect(base_url(URL_HOME_RUBRIC));
+					if($this->form_validation->run() !== FALSE):
+						$this->model_rubric->update_rubric($r_title, $r_description, $r_id);
+						$this->session->set_flashdata('success', 'Catégorie "' . $r_title . '" modifiée.');
+						redirect(base_url(URL_HOME_RUBRIC));
+					endif;
+
+				else:
+					$this->session->set_flashdata('alert', 'Cette rubrique n\'existe pas ou n\'a jamais existé');
+					redirect(URL_HOME_RUBRIC);
 				endif;
 
 			endif;
@@ -208,14 +234,14 @@ class Dashboard extends CI_Controller {
 		if ($this->session->userdata('logged_in')):
 
 			// On vérifie si la rubrique existe toujours
-			if ($this->model_admin->get_rubric($r_id)->num_rows() == 1):
+			if ($this->model_rubric->get_rubric($r_id)->num_rows() == 1):
 
 				// On vérifie si il y a des articles rattachés à cette rubrique
-				if ($this->model_admin->get_content_by_rubric($r_id)->num_rows() == 0):
-					$this->model_admin->delete_rubric($r_id);
+				if ($this->model_content->get_content_by_rubric($r_id)->num_rows() == 0):
+					$this->model_rubric->delete_rubric($r_id);
 					$this->session->set_flashdata('success', 'Rubrique supprimée.');
 				else:
-					$this->session->set_flashdata('alert', 'Impossible de supprimer cette rubrique car il y a un ou plusieurs article(s) rattaché(s).');
+					$this->session->set_flashdata('alert', 'Impossible de supprimer cette rubrique car il y a un ou plusieurs article(s) rattaché(s). <a href="'.base_url(URL_HOME_CONTENT . '/edit_rubric/'. $r_id .'#others').'">Afficher</a>');
 				endif;
 
 			else:
@@ -223,6 +249,118 @@ class Dashboard extends CI_Controller {
 			endif;
 
 			redirect(base_url(URL_HOME_RUBRIC));
+
+		else:
+			$this->get_redirect();
+		endif;
+	}
+
+	// Afficher les utilisateurs
+	function users()
+	{
+		if ($this->session->userdata('logged_in')):
+			// Pour afficher le login
+			$data['login'] = $this->get_login();
+			// Pour récupérer le level de l'user
+			$data['level'] = $this->get_level();
+
+			$data['page']  = 'users';
+			$data['title'] = 'Utilisateurs';
+
+			$data['query'] = $this->model_user->get_users();
+
+			$this->load->view(URL_LAYOUT, $data);
+
+		else:
+			$this->get_redirect();
+		endif;
+	}
+
+	// Ajouter ou modifier un utilisateur
+	function edit_user($u_id = '')
+	{
+		if ($this->session->userdata('logged_in')):
+			// Pour afficher le login
+			$data['login'] = $this->get_login();
+			// Pour récupérer le level de l'user
+			$data['level'] = $this->get_level();
+
+			// Si l'user est bien un admin
+			if ($data['level'] == 1):
+
+				// Mise en place du formulaire via form-validation
+				$this->form_validation->set_rules('u_login', 'Login', 'trim|required');
+				$this->form_validation->set_rules('u_pass', 'Pass', 'trim|required');
+				$this->form_validation->set_rules('u_level', 'Level', 'required');
+
+				// Assignations du formulaire
+				$u_login = $this->input->post('u_login');
+				$u_pass  = $this->input->post('u_pass');
+				$u_level = $this->input->post('u_level');
+
+				// On vérifie si c'est pour ajouter ou modifier via l'URI
+				if ($this->uri->total_segments() == 3):
+					$data['page']  = 'add_user';
+					$data['title'] = 'Ajouter un utilisateur';
+
+					if ($this->form_validation->run() !== FALSE):
+						$this->model_user->create_user($u_login, $u_pass, $u_level);
+						$this->session->set_flashdata('success', 'Utilisateur ou utilisatrice "' . $u_login . '" ajouté(e)');
+	 					redirect(base_url(URL_HOME_RUBRIC));
+					endif;
+
+				else:
+					$data['page']  	 = 'edit_user';
+					$row 		     = $this->model_user->get_user($u_id)->row();
+					$data['u_login'] = $row->u_login;
+					$data['u_pass']  = $row->u_pass;
+					$data['u_level'] = $row->u_level;
+					$data['title']   = 'Mofidifier l\'utilisateur ' . $data['u_login'];
+
+					if($this->form_validation->run() !== FALSE):
+						$this->model_user->update_user($u_login, $u_pass, $u_level, $u_id);
+						$this->session->set_flashdata('success', 'Utilisateur ou utilisatrice "' . $u_login . '" modifié(e) (les paramètre prendront effet lors de la prochaine connexion).');
+						redirect(base_url(URL_HOME_USERS));
+					endif;
+
+				endif;
+
+				$this->load->view(URL_LAYOUT, $data);
+
+			else:
+				$this->session->set_flashdata('alert', 'Vous ne disposez pas des droits nécessaires pour accèder à cette partie');
+				redirect(base_url(URL_HOME_CONTENT));
+			endif;
+
+		else:
+			$this->get_redirect();
+		endif;
+	}
+
+	// Supprimer un utilisateur
+	function delete_user($u_id)
+	{
+		if ($this->session->userdata('logged_in')):
+			// Pour récupérer le level de l'utilisateur
+			$data['level'] = $this->get_level();
+
+			// Si l'utilisateur est bien un admin
+			if ($data['level'] == 1):
+
+				// On vérifie si l'utilisateur existe toujours
+				if ($this->model_user->get_user($u_id)->num_rows() == 1):
+					$this->model_user->delete_user($u_id);
+					$this->session->set_flashdata('success', 'Utilisateur ou utilisatrice supprimé(e).');
+				else:
+					$this->session->set_flashdata('alert', 'Cette utilisateur n\'existe pas ou n\'a jamais existé.');
+				endif;
+
+				redirect(base_url(URL_HOME_USERS));
+
+			else:
+				$this->session->set_flashdata('alert', 'Vous ne disposez pas des droits nécessaires pour accèder à cette partie');
+				redirect(base_url(URL_HOME_CONTENT));
+			endif;
 
 		else:
 			$this->get_redirect();

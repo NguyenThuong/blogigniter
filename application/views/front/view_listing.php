@@ -1,6 +1,6 @@
-<?php if($query->num_rows() > 0): ?>
+<?php if ($query->num_rows() > 0): ?>
 
-	<?php foreach($query->result() as $row): ?>
+	<?php foreach ($query->result() as $row): ?>
 		<article class="thumbnail">
 			<div class="caption">
 				<p class="row">

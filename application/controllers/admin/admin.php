@@ -6,7 +6,7 @@ class Admin extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->database();
-		$this->load->model('admin/model_user');
+		$this->load->model('model_user');
 		$this->load->library(array('encrypt','session'));
 		$this->load->helper(array('functions', 'url'));
 
@@ -52,7 +52,8 @@ class Admin extends CI_Controller {
 			foreach($query as $row):
 				$sess_array = array(
 					'id'    => $row->u_id,
-					'login' => $row->u_login
+					'login' => $row->u_login,
+					'level' => $row->u_level
 				);
 				$u_id = $row->u_id;
 				// Création de la session

@@ -16,10 +16,10 @@
 			</div><!-- end of .caption -->
 		</article><!-- end of .thumbnail -->
 
-		<?php if($query_same_rubric->num_rows() > 0): ?>
-		<h3>Article<?php if($query_same_rubric->num_rows() > 1){ echo 's';} ?> de la même catégorie :</h3>
+		<?php if ($query_same_rubric->num_rows() > 0): ?>
+		<h3>Article<?php if ($query_same_rubric->num_rows() > 1){ echo 's';} ?> de la même catégorie :</h3>
 		<ul>
-		<?php foreach($query_same_rubric->result() as $row): ?>
+		<?php foreach ($query_same_rubric->result() as $row): ?>
 			<li><?php echo content_url($row->r_url_rw, $row->c_url_rw, $row->c_title); ?></li>
 		<?php endforeach; ?>
 		</ul>

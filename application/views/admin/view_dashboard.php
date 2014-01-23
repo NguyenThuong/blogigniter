@@ -25,9 +25,16 @@
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li <?php if ($page == 'home' or $page == 'add_content' or $page == 'edit_content'){ echo "class='active'"; }; ?>><a href="<?php echo base_url('admin/dashboard'); ?>">Articles</a></li>
+					<li <?php if ($page == 'home' or $page == 'add_content' or $page == 'edit_content'){ echo "class='active'"; }; ?>>
+						<a href="<?php echo base_url('admin/dashboard'); ?>">Articles</a>
+					</li>
 					<li class="divider"></li>
-					<li <?php if ($page == 'rubric' or $page == 'add_rubric' or $page == 'edit_rubric'){ echo "class='active'"; }; ?>><a href="<?php echo base_url('admin/dashboard/rubric'); ?>">Rubriques</a></li>
+					<li <?php if ($page == 'rubric' or $page == 'add_rubric' or $page == 'edit_rubric'){ echo "class='active'"; }; ?>>
+						<a href="<?php echo base_url('admin/dashboard/rubric'); ?>">Rubriques</a>
+						</li>
+					<li <?php if ($page == 'users' or $page == 'add_user' or $page == 'edit_user'){ echo "class='active'"; }; ?>>
+						<a href="<?php echo base_url('admin/dashboard/users'); ?>">Utilisateurs</a>
+					</li>
 				</ul><!-- end .nav navbar-nav -->
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="<?php echo base_url(); ?>" target="_blank">Le blog</a></li>
@@ -58,43 +65,67 @@
 	<div class="row">
 
 		<div class="col-md-2">
-			<ul class="nav nav-pills nav-stacked">
-				<li>
-					<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit'); ?>'" class="btn btn-danger">
-						<i class="glyphicon glyphicon-plus"></i> Ajouter un article
-					</button>
-				</li>
-				<br />
-				<li>
-					<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit_rubric'); ?>'" class="btn btn-primary">
-						<i class="glyphicon glyphicon-plus"></i> Ajouter une rubrique
-					</button>
-				</li>
-			</ul><!-- end of .col-md-2 .nav-stacked -->
+
+			<section>
+				<ul class="nav nav-pills nav-stacked">
+					<li>
+						<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit'); ?>'" class="btn btn-danger">
+							<i class="glyphicon glyphicon-plus"></i> Ajouter un article
+						</button>
+					</li>
+					<br />
+					<li>
+						<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit_rubric'); ?>'" class="btn btn-primary">
+							<i class="glyphicon glyphicon-plus"></i> Ajouter une rubrique
+						</button>
+					</li>
+					<br />
+					<li>
+						<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit_user'); ?>'" class="btn">
+							<i class="glyphicon glyphicon-plus"></i> Ajouter un utilisateur
+						</button>
+					</li>
+				</ul><!-- end of .col-md-2 .nav-stacked -->
+			</section>
+
+			<section>
+				<h3>Statistiques</h3>
+			</section>
+
 		</div><!-- end of .col-md-2 -->
 
 		<div class="col-md-10">
 		<?php switch ($page) {
 			case 'home':
-				$this->load->view('admin/dashboard/view_listing_content');
+				$this->load->view('admin/dashboard/content/view_listing_content');
+
 				break;
 
 			case 'add_content':
 			case 'edit_content':
-				$this->load->view('admin/dashboard/view_edit_content');
+				$this->load->view('admin/dashboard/content/view_edit_content');
 				break;
 
 			case 'rubric':
-				$this->load->view('admin/dashboard/view_listing_rubric');
+				$this->load->view('admin/dashboard/rubrics/view_listing_rubric');
 				break;
 
 			case 'add_rubric':
 			case 'edit_rubric':
-				$this->load->view('admin/dashboard/view_edit_rubric');
+				$this->load->view('admin/dashboard/rubrics/view_edit_rubric');
+				break;
+
+			case 'users':
+				$this->load->view('admin/dashboard/users/view_listing_users');
+				break;
+
+			case 'add_user':
+			case 'edit_user':
+				$this->load->view('admin/dashboard/users/view_edit_user');
 				break;
 
 			default:
-				
+				$this->load->view('admin/dashboard');
 				break;
 		}
 		?>
@@ -103,14 +134,15 @@
 	</div><!-- end .row --> 
 
 	<footer>
-        <footer data-role="footer">
-            <p class="footer" style="text-align: center">Propulsé par Codeigniter - Temps d'exécution : <strong>{elapsed_time}</strong> seconds</p>
-        </footer>
+		<footer data-role="footer">
+			<p class="footer" style="text-align: center">Propulsé par Codeigniter - Temps d'exécution : <strong>{elapsed_time}</strong> seconds</p>
+		</footer>
 	</footer>
 
-	<?php 
+	<?php
 		echo js_url('jquery.min');
 		echo js_url('bootstrap.min');
+
 	?>
 
 	</body>

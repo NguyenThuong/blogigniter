@@ -4,7 +4,7 @@
 
 	<!-- Start breadcrumb -->
 	<ol class="breadcrumb" itemtype="http://data-vocabulary.org/Breadcrumb" itemscope="">
-		<?php if($page == 'home'): ?>
+		<?php if ($page == 'home'): ?>
 		<li class="active">
 			<span itemprop="title">
 			<?php if(isset($numero_page)): ?>
@@ -16,7 +16,7 @@
 		</li>
 		<?php else: ?>
 		<li><span itemprop="title"><a itemprop="url" href="<?php echo base_url(); ?>">Home</a></span></li>
-			<?php if($page == 'rubric'): ?>
+			<?php if ($page == 'rubric'): ?>
 				<li class="active">
 					<span itemprop="title">
 					<?php if(isset($numero_page)): ?>
@@ -27,7 +27,7 @@
 					</span>
 				</li>
 			<?php endif; ?>
-			<?php if($page == 'content'): ?>
+			<?php if ($page == 'content'): ?>
 				<li>
 					<span itemprop="title"><?php echo rubric_url($r_url_rw, $r_title); ?></span>
 				</li>
@@ -35,7 +35,7 @@
 					<span itemprop="title"><?php echo $c_title; ?></span>
 				</li>
 			<?php endif; ?>
-			<?php if($page == '404'): ?>
+			<?php if ($page == '404'): ?>
 				<li class="active">
 					<span itemprop="title">Erreur 404</span>
 				</li>
