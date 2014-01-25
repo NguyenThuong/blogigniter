@@ -23,4 +23,7 @@
 				</ul>
 				<?php endif; ?>
 
+				<h3>RSS</h3>
+				<a href="<?php echo base_url('rss'); ?>"><img src="assets/img/rss.png" alt="Flux RSS" /></a>
+
 			</aside><!-- end of .col-md-4 -->

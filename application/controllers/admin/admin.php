@@ -5,15 +5,15 @@ class Admin extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->database();
+		// Chargement des ressources pour ce controller
 		$this->load->model('model_user');
 		$this->load->library(array('encrypt','session'));
-		$this->load->helper(array('functions', 'url'));
-
+		$this->load->helper(array('functions'));
 		session_start();
+		$this->output->enable_profiler(TRUE);
 	}
 
-	function index()
+	public function index()
 	{
 		if(!$this->session->userdata('logged_in')):
 			$this->load->library('form_validation');
@@ -43,7 +43,6 @@ class Admin extends CI_Controller {
 	// Vérification login / mot de passe dans la BDD
 	function check_database($password)
 	{
-
 		$login = $this->input->post('username');
 		$query = $this->model_user->login($login, $password);
 

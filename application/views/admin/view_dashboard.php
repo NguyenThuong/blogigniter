@@ -49,17 +49,21 @@
 
 		</nav><!-- end .navbar .navbar-default -->
 
-	<?php if ($this->session->flashdata('success')): ?>
+		<?php if (validation_errors()): ?>
+			<?php echo validation_errors('<div class="alert alert-danger">', ' <a class="close" data-dismiss="alert" href="#">&times;</a></div>'); ?>
+		<?php endif; ?>
+
+		<?php if ($this->session->flashdata('success')): ?>
 		<div class="alert alert-success">
 			<?php echo $this->session->flashdata('success'); ?> <a class="close" data-dismiss="alert" href="#">&times;</a>
 		</div>
-	<?php endif; ?>
+		<?php endif; ?>
 
-	<?php if ($this->session->flashdata('alert')): ?>
+		<?php if ($this->session->flashdata('alert')): ?>
 		<div class="alert alert-danger">
 			<?php echo $this->session->flashdata('alert'); ?> <a class="close" data-dismiss="alert" href="#">&times;</a>
 		</div>
-	<?php endif; ?>
+		<?php endif; ?>
 
 
 	<div class="row">
@@ -98,7 +102,6 @@
 		<?php switch ($page) {
 			case 'home':
 				$this->load->view('admin/dashboard/content/view_listing_content');
-
 				break;
 
 			case 'add_content':
@@ -142,7 +145,6 @@
 	<?php
 		echo js_url('jquery.min');
 		echo js_url('bootstrap.min');
-
 	?>
 
 	</body>

@@ -31,7 +31,22 @@ class Model_user extends CI_Model {
 	}
 
 	// Obtenir un utilisateur
-	function get_user($u_id)
+	function get_user($u_id, $u_login)
+	{
+		$this->db->select('u_id, u_login, u_pass, u_level');
+		$this->db->from('user');
+		if (empty($u_login)):
+		$this->db->where('u_id', $u_id);
+		else:
+		$this->db->where('u_login', $u_login);
+		endif;
+		$this->db->limit(1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
+/*	function get_user($u_id)
 	{
 		$this->db->select('u_id, u_login, u_pass, u_level')
 				 ->from('user')
@@ -40,7 +55,7 @@ class Model_user extends CI_Model {
 
 		$query = $this->db->get();
 		return $query;
-	}
+	}*/
 
 	// Créer un utilisateur
 	function create_user($u_login, $u_pass, $u_level)

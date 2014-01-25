@@ -6,10 +6,9 @@ class Blog extends CI_Controller{
 	{
 		parent::__construct();
 		// Chargement des ressources pour ce controller
-		$this->load->database();
 		$this->load->model(array('model_content', 'model_rubric', 'model_user'));
 		$this->load->library('pagination');
-		$this->load->helper(array('functions', 'text', 'url'));
+		$this->load->helper(array('functions', 'text'));
 		define('URL_LAYOUT', 'front/view_layout');
 		define('URL_404'   , 'erreur404');
 		$this->output->enable_profiler(TRUE);

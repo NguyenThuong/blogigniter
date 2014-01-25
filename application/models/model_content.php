@@ -15,13 +15,17 @@ class Model_content extends CI_Model {
 	}
 
 	// Lire un article
-	function get_content($c_id)
+	function get_content($c_id, $c_title)
 	{
-		$this->db->select('c_id, content.r_id, c_title, c_content')
-				 ->from('content')
-				 ->join('rubric', 'content.r_id = rubric.r_id')
-				 ->where('c_id', $c_id)
-				 ->limit(1);
+		$this->db->select('c_id, content.r_id, c_title, c_content');
+		$this->db->from('content');
+		$this->db->join('rubric', 'content.r_id = rubric.r_id');
+		if (empty($c_title)):
+		$this->db->where('c_id', $c_id);
+		else:
+		$this->db->where('c_title', $c_title);
+		endif;
+		$this->db->limit(1);
 
 		$query = $this->db->get();
 		return $query;

@@ -40,6 +40,9 @@
 
 $route['default_controller'] = 'front/blog';
 
+# 404
+$route['erreur404'] 	= $route['default_controller'] . '/erreur404';
+
 #admin
 $route['admin']           = 'admin/admin';
 $route['admin/logout'] 	  = 'admin/admin/logout';
@@ -62,8 +65,8 @@ $route['admin/dashboard/edit_user'] 		   = 'admin/dashboard/edit_user';
 $route['admin/dashboard/edit_user/(:num)']     = 'admin/dashboard/edit_user/$1';
 $route['admin/dashboard/delete_user/(:num)']   = 'admin/dashboard/delete_user/$1';
 
-# 404
-$route['erreur404'] 	= $route['default_controller'] . '/erreur404';
+# RSS
+$route['rss'] = "front/feed";
 
 # pagination home
 $route['page/(:num)'] 	= $route['default_controller'] . '/index/$1';

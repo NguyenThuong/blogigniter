@@ -1,7 +1,4 @@
 <?php 
-	if (validation_errors()):
-		echo validation_errors('<div class="alert alert-danger">', ' <a class="close" data-dismiss="alert" href="#">&times;</a></div>');
-	endif;
 	echo form_open(current_url()); // $config['index_page'] = ''; dans config/config.php
 ?>
 

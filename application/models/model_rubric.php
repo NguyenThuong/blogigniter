@@ -14,12 +14,17 @@ class Model_rubric extends CI_Model {
 	}
 
 	// Lire une rubrique
-	function get_rubric($r_id)
+	function get_rubric($r_id, $r_title)
 	{
-		$this->db->select('r_title, r_description')
-				 ->from('rubric')
-				 ->where('r_id', $r_id)
-				 ->limit(1);
+		
+		$this->db->select('r_title, r_description');
+		$this->db->from('rubric');
+		if (empty($r_title)):
+		$this->db->where('r_id', $r_id);
+		else:
+		$this->db->where('r_title', $r_title);
+		endif;
+		$this->db ->limit(1);
 
 		$query = $this->db->get();
 		return $query;

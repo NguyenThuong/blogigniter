@@ -5,10 +5,9 @@ class Dashboard extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->database();
 		$this->load->model(array('model_content', 'model_rubric', 'model_user'));
 		$this->load->library(array('form_validation', 'session'));
-		$this->load->helper(array('functions', 'text', 'url'));
+		$this->load->helper(array('functions', 'text'));
 		define('URL_LAYOUT'      , 'admin/view_dashboard');
 		define('URL_HOME_CONTENT', 'admin/dashboard');
 		define('URL_HOME_RUBRIC' , 'admin/dashboard/rubric');
@@ -42,7 +41,7 @@ class Dashboard extends CI_Controller {
 	}
 
 	// Afficher tous les articles
-	function index()
+	public function index()
 	{
 		if ($this->session->userdata('logged_in')):
 			// Pour afficher le login
@@ -60,18 +59,18 @@ class Dashboard extends CI_Controller {
 	}
 
 	// Ajouter ou éditer un article
-	function edit($c_id = '')
+	public function edit($c_id = '')
 	{
 		if ($this->session->userdata('logged_in')):
 
 			// Pour afficher le login
 			$data['login'] = $this->get_login();
 
-			// Chargement des rubriques
+			// Chargement des rubriques (inputs)
 			$data['rubrics'] = $this->model_rubric->get_rubrics();
-			
+
 			// Mise en place du formulaire
-			$this->form_validation->set_rules('c_title', 'Titre', 'trim|required');
+			$this->form_validation->set_rules('c_title', 'Titre', 'trim|required|callback_check_content');
 			$this->form_validation->set_rules('c_content', 'Contenu', 'trim|required');
 			$this->form_validation->set_rules('rubric', 'Rubrique', 'required');
 
@@ -95,7 +94,7 @@ class Dashboard extends CI_Controller {
 				endif;
 
 			else:
-				$get_content = $this->model_content->get_content($c_id);
+				$get_content = $this->model_content->get_content($c_id, '');
 				// Vérification de l'id
 				if ($get_content->num_rows() == 1):
 					$data['page']  	   = 'edit_content';
@@ -117,7 +116,7 @@ class Dashboard extends CI_Controller {
 				endif;
 
 			endif;
-			
+
 			$this->load->view(URL_LAYOUT, $data);
 
 		else:
@@ -125,8 +124,20 @@ class Dashboard extends CI_Controller {
 		endif;
 	}
 
+	// Vérifier si l'article existe
+	public function check_content($c_title)
+	{
+		if ($this->model_content->get_content('', $c_title)->num_rows() == 1):
+			$this->form_validation->set_message('check_content', 'Impossible de rajouter l\'article "' . $c_title . '" car ce dernier existe déjà.');
+			return FALSE;
+		else:
+			return TRUE;
+		endif;
+	}
+
+
 	// Supprimer un article
-	function delete($id = '')
+	public function delete($id = '')
 	{
 		if ($this->session->userdata('logged_in')):
 
@@ -148,10 +159,9 @@ class Dashboard extends CI_Controller {
 	}
 
 	// Afficher toutes les rubriques
-	function rubric()
+	public function rubric()
 	{
 		if ($this->session->userdata('logged_in')):
-
 			// Pour afficher le login
 			$data['login'] = $this->get_login();
 
@@ -168,15 +178,14 @@ class Dashboard extends CI_Controller {
 	}
 
 	// Ajouter ou modifier une rubrique
-	function edit_rubric($r_id = '')
+	public function edit_rubric($r_id = '')
 	{
 		if ($this->session->userdata('logged_in')):
-			
 			// Pour afficher le login
 			$data['login'] = $this->get_login();
 			
 			// Mise en place du formulaire via form-validation
-			$this->form_validation->set_rules('r_title', 'Titre', 'trim|required');
+			$this->form_validation->set_rules('r_title', 'Titre', 'trim|required|callback_check_rubric');
 			$this->form_validation->set_rules('r_description', 'Description', 'trim|required');
 
 			// Assignations du formulaire
@@ -194,11 +203,11 @@ class Dashboard extends CI_Controller {
 				if ($this->form_validation->run() !== FALSE):
 					$this->model_rubric->create_rubric($r_title, $r_description, $r_url_rw);
 					$this->session->set_flashdata('success', 'Rubrique "' . $r_title . '" ajoutée');
- 					redirect(base_url(URL_HOME_RUBRIC));
+					redirect(base_url(URL_HOME_RUBRIC));
 				endif;
 
 			else:
-				$get_content = $this->model_rubric->get_rubric($r_id);
+				$get_content = $this->model_rubric->get_rubric($r_id, '');
 				// Vérification de l'id
 				if ($get_content->num_rows() == 1):
 					$data['page']  		   = 'edit_rubric';
@@ -215,7 +224,7 @@ class Dashboard extends CI_Controller {
 					endif;
 
 				else:
-					$this->session->set_flashdata('alert', 'Cette rubrique n\'existe pas ou n\'a jamais existé');
+					$this->session->set_flashdata('alert', 'Cette rubrique n\'existe pas ou n\'a jamais existé.');
 					redirect(URL_HOME_RUBRIC);
 				endif;
 
@@ -228,11 +237,21 @@ class Dashboard extends CI_Controller {
 		endif;
 	}
 
+	// Vérifier si la rubrique existe
+	public function check_rubric($r_title)
+	{
+		if ($this->model_rubric->get_rubric('', $r_title)->num_rows() == 1):
+			$this->form_validation->set_message('check_rubric', 'Impossible de rajouter la rubrique "' . $r_title . '" car cette dernière existe déjà.');
+			return FALSE;
+		else:
+			return TRUE;
+		endif;
+	}
+
 	// Supprimer une catégorie
-	function delete_rubric($r_id)
+	public function delete_rubric($r_id)
 	{
 		if ($this->session->userdata('logged_in')):
-
 			// On vérifie si la rubrique existe toujours
 			if ($this->model_rubric->get_rubric($r_id)->num_rows() == 1):
 
@@ -256,7 +275,7 @@ class Dashboard extends CI_Controller {
 	}
 
 	// Afficher les utilisateurs
-	function users()
+	public function users()
 	{
 		if ($this->session->userdata('logged_in')):
 			// Pour afficher le login
@@ -277,7 +296,7 @@ class Dashboard extends CI_Controller {
 	}
 
 	// Ajouter ou modifier un utilisateur
-	function edit_user($u_id = '')
+	public function edit_user($u_id = '')
 	{
 		if ($this->session->userdata('logged_in')):
 			// Pour afficher le login
@@ -289,7 +308,7 @@ class Dashboard extends CI_Controller {
 			if ($data['level'] == 1):
 
 				// Mise en place du formulaire via form-validation
-				$this->form_validation->set_rules('u_login', 'Login', 'trim|required');
+				$this->form_validation->set_rules('u_login', 'Login', 'trim|required|callback_check_user');
 				$this->form_validation->set_rules('u_pass', 'Pass', 'trim|required');
 				$this->form_validation->set_rules('u_level', 'Level', 'required');
 
@@ -306,20 +325,20 @@ class Dashboard extends CI_Controller {
 					if ($this->form_validation->run() !== FALSE):
 						$this->model_user->create_user($u_login, $u_pass, $u_level);
 						$this->session->set_flashdata('success', 'Utilisateur ou utilisatrice "' . $u_login . '" ajouté(e)');
-	 					redirect(base_url(URL_HOME_RUBRIC));
+						redirect(base_url(URL_HOME_USERS));
 					endif;
 
 				else:
 					$data['page']  	 = 'edit_user';
-					$row 		     = $this->model_user->get_user($u_id)->row();
+					$row 		     = $this->model_user->get_user($u_id)->num_rows();
 					$data['u_login'] = $row->u_login;
 					$data['u_pass']  = $row->u_pass;
 					$data['u_level'] = $row->u_level;
 					$data['title']   = 'Mofidifier l\'utilisateur ' . $data['u_login'];
 
-					if($this->form_validation->run() !== FALSE):
+					if ($this->form_validation->run() !== FALSE):
 						$this->model_user->update_user($u_login, $u_pass, $u_level, $u_id);
-						$this->session->set_flashdata('success', 'Utilisateur ou utilisatrice "' . $u_login . '" modifié(e) (les paramètre prendront effet lors de la prochaine connexion).');
+						$this->session->set_flashdata('success', 'Utilisateur ou utilisatrice "' . $u_login . '" modifié(e) (les paramètres prendront effet lors de la prochaine connexion).');
 						redirect(base_url(URL_HOME_USERS));
 					endif;
 
@@ -328,7 +347,7 @@ class Dashboard extends CI_Controller {
 				$this->load->view(URL_LAYOUT, $data);
 
 			else:
-				$this->session->set_flashdata('alert', 'Vous ne disposez pas des droits nécessaires pour accèder à cette partie');
+				$this->session->set_flashdata('alert', 'Vous ne disposez pas des droits nécessaires pour accèder à cette partie.');
 				redirect(base_url(URL_HOME_CONTENT));
 			endif;
 
@@ -337,8 +356,19 @@ class Dashboard extends CI_Controller {
 		endif;
 	}
 
+	// Vérifier si l'utilisateur existe
+	public function check_user($u_login)
+	{
+		if ($this->model_user->get_user('', $u_login)->num_rows() == 1):
+			$this->form_validation->set_message('check_user', 'Impossible de rajouter l\'utilisateur "' . $u_login . '" car ce dernier existe déjà.');
+			return FALSE;
+		else:
+			return TRUE;
+		endif;
+	}
+
 	// Supprimer un utilisateur
-	function delete_user($u_id)
+	public function delete_user($u_id)
 	{
 		if ($this->session->userdata('logged_in')):
 			// Pour récupérer le level de l'utilisateur
@@ -358,7 +388,7 @@ class Dashboard extends CI_Controller {
 				redirect(base_url(URL_HOME_USERS));
 
 			else:
-				$this->session->set_flashdata('alert', 'Vous ne disposez pas des droits nécessaires pour accèder à cette partie');
+				$this->session->set_flashdata('alert', 'Vous ne disposez pas des droits nécessaires pour accèder à cette partie.');
 				redirect(base_url(URL_HOME_CONTENT));
 			endif;
 
