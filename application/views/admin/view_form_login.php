@@ -63,6 +63,7 @@
 
 				</div><!-- end .main content -->
 			</div><!-- end .row -->
+			<p class="text-center"><a class="btn" href="<?php echo base_url(); ?>">Retourner sur le blog</a></p>
 		</div> <!-- end .container -->
 
 	<?php 

@@ -3,12 +3,19 @@
 class Model_content extends CI_Model {
 
 	// Lire tous les articles
-	function get_contents()
+	function get_contents($last_content, $state)
 	{
-		$this->db->select('c_id, c_title, c_content, c_cdate, c_udate, c_url_rw, r_title, r_url_rw')
-				 ->from('content')
-				 ->join('rubric', 'rubric.r_id = content.r_id')
-				 ->order_by('c_id', 'DESC');
+		$this->db->select('c_id, c_title, c_content, c_image, c_state, c_cdate, c_udate, c_url_rw, content.r_id, r_title, r_url_rw, content.u_id, u_login');
+		$this->db->from('content');
+		$this->db->join('rubric', 'rubric.r_id = content.r_id');
+		$this->db->join('user', 'content.u_id = user.u_id');
+		if (!empty($last_content)):
+		$this->db->where('c_cdate <=', unix_to_human(now(), TRUE, 'eu') );
+		endif;	
+		if (!empty($state)):
+		$this->db->where('c_state', 1);
+		endif;
+		$this->db->order_by('c_id', 'DESC');
 
 		$query = $this->db->get();
 		return $query;
@@ -17,9 +24,10 @@ class Model_content extends CI_Model {
 	// Lire un article
 	function get_content($c_id, $c_title)
 	{
-		$this->db->select('c_id, content.r_id, c_title, c_content');
+		$this->db->select('c_id, content.r_id, content.u_id, c_title, c_content, c_image, c_state, c_url_rw');
 		$this->db->from('content');
 		$this->db->join('rubric', 'content.r_id = rubric.r_id');
+		$this->db->join('user', 'content.u_id = user.u_id');
 		if (empty($c_title)):
 		$this->db->where('c_id', $c_id);
 		else:
@@ -31,33 +39,73 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Créer un article
-	function create_content($r_id, $c_title, $c_content, $c_url_rw)
+	// Vérifie si l'article existe déjà
+	function check_title($c_id, $c_title)
 	{
-		$date = new DateTime(null, new DateTimeZone('Europe/Paris'));
+		$this->db->select('c_title')
+				 ->from('content')
+				 ->where('c_id <>', $c_id)
+				 ->where('c_title', $c_title);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
+	// Vérifie si une url est déjà existante
+	function check_url_rw($c_id, $c_url_rw)
+	{
+		$this->db->select('c_url_rw')
+				 ->from('content')
+				 ->where('c_id <>', $c_id)
+				 ->where('c_url_rw', $c_url_rw);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
+	// Créer un article
+	function create_content($r_id, $u_id, $c_title, $c_content, $c_image, $c_state, $c_url_rw)
+	{
 		$data = array(
 			'r_id'  	=> $r_id,
+			'u_id'		=> $u_id,
 			'c_title' 	=> $c_title,
 			'c_content' => $c_content,
-			'c_cdate' 	=> $date->format('Y-m-d H:i:s'),
-			'c_udate'   => $date->format('Y-m-d H:i:s'),
-			'c_url_rw' 	=> $c_url_rw,
+			'c_image' 	=> $c_image,
+			'c_state'   => $c_state,
+			'c_cdate' 	=> unix_to_human(now(), TRUE, 'eu'),
+			'c_udate'   => unix_to_human(now(), TRUE, 'eu'),
+			'c_url_rw' 	=> $c_url_rw
 		);
 
 		$this->db->insert('content', $data);
 	}
 	
-
 	// Mettre à jour un article
-	function update_content($r_id, $c_title, $c_content, $c_id)
+	function update_content($r_id, $u_id, $c_title, $c_content, $c_image, $c_state, $c_url_rw, $c_udate, $c_id)
 	{
-		$date = new DateTime(null, new DateTimeZone('Europe/Paris'));
+		if ($c_udate === TRUE):
 		$data = array(
 			'r_id'  	=> $r_id,
+			'u_id'  	=> $u_id,
 			'c_title' 	=> $c_title,
 			'c_content' => $c_content,
-			'c_udate'   => $date->format('Y-m-d H:i:s'),
+			'c_image' 	=> $c_image,
+			'c_state'	=> $c_state,
+			'c_url_rw'	=> $c_url_rw,
+			'c_udate'   => unix_to_human(now(), TRUE, 'eu')
 		);
+		else:
+			$data = array(
+			'r_id'  	=> $r_id,
+			'u_id'  	=> $u_id,
+			'c_title' 	=> $c_title,
+			'c_content' => $c_content,
+			'c_image' 	=> $c_image,
+			'c_state'	=> $c_state,
+			'c_url_rw'	=> $c_url_rw
+		);
+		endif;
 
 		$this->db->where('c_id', $c_id);
 		$this->db->update('content', $data);
@@ -72,15 +120,27 @@ class Model_content extends CI_Model {
 
 
 	// Obtenir les articles pour le listing (pagination)
-	function get_contents_listing($numero_page, $per_page)
+	function get_contents_listing($u_login, $numero_page, $per_page)
 	{
-		$this->db->select('c_title, c_content, c_cdate, c_url_rw, r_title, r_url_rw');
+		if (!empty($u_login)):
+			$author = ', u_login';
+		else:
+			$author = '';
+		endif;
+		$this->db->select('c_title, c_content, c_image, c_cdate, c_url_rw, r_title, r_url_rw ' . $author . '');
 		$this->db->from('content');
 		$this->db->join('rubric', 'rubric.r_id = content.r_id');
+		if ($u_login):
+			$this->db->join('user', 'user.u_id = content.u_id');
+			$this->db->where('user.u_login', $u_login);
+		endif;
+		$this->db->where('c_state', 1);
+		$this->db->where('c_cdate <', unix_to_human(now(), TRUE, 'eu') );
 		$this->db->order_by('c_id', 'DESC');
-		if($numero_page):
+
+		if ($numero_page and $per_page):
 			$this->db->limit($per_page, ($numero_page-1) * $per_page);
-		else:
+		elseif($per_page):
 			$this->db->limit($per_page);
 		endif;
 
@@ -91,11 +151,14 @@ class Model_content extends CI_Model {
 	// Obtenir un article en particulier (via son slug) pour le content
 	function get_content_by_slug($slug_rubric, $slug_content)
 	{
-		$this->db->select('c_title, c_content, c_cdate, c_url_rw, r_title, r_url_rw')
+		$this->db->select('c_id, c_title, c_content, c_image, c_cdate, c_udate, c_url_rw, r_title, r_url_rw, user.u_id, u_login, u_biography')
 				 ->from('content')
 				 ->join('rubric', 'content.r_id = rubric.r_id')
+				 ->join('user', 'content.u_id = user.u_id')
 				 ->where('r_url_rw', $slug_rubric)
-				 ->where('c_url_rw', $slug_content);
+				 ->where('c_url_rw', $slug_content)
+				 ->where('c_state', 1)
+				 ->where('c_cdate <=', unix_to_human(now(), TRUE, 'eu'));
 
 		$query = $this->db->get();
 		return $query;
@@ -108,6 +171,8 @@ class Model_content extends CI_Model {
 				 ->join('rubric', 'rubric.r_id = content.r_id')
 				 ->from('content')
 				 ->where('c_url_rw <>', $slug_content)
+				 ->where('c_cdate <=', unix_to_human(now(), TRUE, 'eu') )
+				 ->where('c_state', 1)
 				 ->order_by('c_id', 'DESC');
 
 		$query = $this->db->get();
@@ -122,6 +187,8 @@ class Model_content extends CI_Model {
 				 ->from('content')
 				 ->where('rubric.r_url_rw', $slug_rubric)
 				 ->where('content.c_url_rw <>', $slug_content)
+				 ->where('c_state', 1)
+				 ->where('c_cdate <=', unix_to_human(now(), TRUE, 'eu') )
 				 ->order_by('c_id', 'DESC');
 
 		$query = $this->db->get();
@@ -131,12 +198,14 @@ class Model_content extends CI_Model {
 	// Obtenir les rubriques pour le listing (via son slug)
 	function get_contents_rubric_listing($slug_rubric, $numero_page, $per_page)
 	{
-		$this->db->select('c_title, c_content, c_cdate, c_url_rw, r_title, r_description, r_url_rw');
+		$this->db->select('c_title, c_content, c_image, c_cdate, c_url_rw, r_title, r_description, r_url_rw');
 		$this->db->from('content');
 		$this->db->join('rubric', 'rubric.r_id = content.r_id');
 		$this->db->where('rubric.r_url_rw', $slug_rubric);
+		$this->db->where('c_state', 1);
+		$this->db->where('c_cdate <=', unix_to_human(now(), TRUE, 'eu') );
 		$this->db->order_by('content.c_id', 'DESC');
-		if($numero_page and $per_page):
+		if ($numero_page and $per_page):
 			$this->db->limit($per_page, ($numero_page-1) * $per_page);
 		elseif($per_page):
 			$this->db->limit($per_page);
@@ -146,7 +215,7 @@ class Model_content extends CI_Model {
 		return $query;
 	} 
 
-	// Le contenu dans une rubrique spécifique :
+	// Le contenu dans une rubrique spécifique
 	function get_content_by_rubric($r_id)
 	{
 		$this->db->select('c_id, c_title')
@@ -158,8 +227,26 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
+	// Le contenu rédigié par un utilistateur
+	function get_content_by_user($u_id, $limit)
+	{
+		$this->db->select('c_id, c_title, c_content, c_state, c_cdate, c_udate, c_url_rw, rubric.r_id, r_title, r_url_rw');
+		$this->db->from('content');
+		$this->db->join('user', 'content.u_id = user.u_id');
+		$this->db->join('rubric', 'content.r_id = rubric.r_id');
+		$this->db->where('user.u_id', $u_id);
+		$this->db->order_by('c_id', 'DESC');
+
+		if (!empty($limit)):
+			$this->db->limit($limit);
+		endif;
+
+		$query = $this->db->get();
+		return $query;
+	}
 
 }
 
-/* End of file model_admin.php */
-/* Location: ./application/models/admin/model_admin.php */
+
+/* End of file model_content.php */
+/* Location: ./application/models/admin/model_content.php */

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <title>404 Page Not Found</title>
 <style type="text/css">

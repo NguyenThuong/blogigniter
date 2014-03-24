@@ -41,7 +41,8 @@
 $route['default_controller'] = 'front/blog';
 
 # 404
-$route['erreur404'] 	= $route['default_controller'] . '/erreur404';
+//$route['erreur404'] 	= $route['default_controller'] . '/erreur404';
+$route['404_override'] = '';
 
 #admin
 $route['admin']           = 'admin/admin';
@@ -52,6 +53,11 @@ $route['admin/dashboard'] = 'admin/dashboard';
 $route['admin/dashboard/edit'] 			= 'admin/dashboard/edit';
 $route['admin/dashboard/edit/(:num)'] 	= 'admin/dashboard/edit/$1';
 $route['admin/dashboard/delete/(:num)'] = 'admin/dashboard/delete/$1';
+$route['admin/dashboard/author']		= 'admin/dashboard/author';
+
+$route['admin/dashboard/author/(:num)'] = 'admin/dashboard/author/$1';
+$route['admin/dashboard/params']		= 'admin/dashboard/params';
+$route['admin/dashboard/search']		= 'admin/dashboard/search';
 
 # ADMIN rubric
 $route['admin/dashboard/rubric'] 			   = 'admin/dashboard/rubric';
@@ -59,14 +65,32 @@ $route['admin/dashboard/edit_rubric'] 		   = 'admin/dashboard/edit_rubric';
 $route['admin/dashboard/edit_rubric/(:num)']   = 'admin/dashboard/edit_rubric/$1';
 $route['admin/dashboard/delete_rubric/(:num)'] = 'admin/dashboard/delete_rubric/$1';
 
+# ADMIN comments
+$route['admin/dashboard/comment']					 = 'admin/dashboard/comment';
+$route['admin/dashboard/moderate_comment/(:num)'] 	 = 'admin/dashboard/moderate_comment/$1';
+$route['admin/dashboard/desactivate_comment/(:num)'] = 'admin/dashboard/desactivate_comment/$1';
+$route['admin/dashboard/delete_comment/(:num)']		 = 'admin/dashboard/delete_comment/$1';
+
 # ADMIN users
-$route['admin/dashboard/users'] 			   = 'admin/dashboard/users';
-$route['admin/dashboard/edit_user'] 		   = 'admin/dashboard/edit_user';
-$route['admin/dashboard/edit_user/(:num)']     = 'admin/dashboard/edit_user/$1';
-$route['admin/dashboard/delete_user/(:num)']   = 'admin/dashboard/delete_user/$1';
+$route['admin/dashboard/users']				 = 'admin/dashboard/users';
+$route['admin/dashboard/edit_user']			 = 'admin/dashboard/edit_user';
+$route['admin/dashboard/edit_user/(:num)']	 = 'admin/dashboard/edit_user/$1';
+$route['admin/dashboard/delete_user/(:num)'] = 'admin/dashboard/delete_user/$1';
+$route['admin/dashboard/change_password']	 = 'admin/dashboard/change_password';
+
+$route['admin/dashboard/search']			 = 'admin/dashboard/search';
+
+# ADMIN gallery
+$route['admin/dashboard/gallery'] = 'admin/dashboard/gallery';
+$route['admin/dashboard/upload']  = 'admin/dashboard/upload';
 
 # RSS
 $route['rss'] = "front/feed";
+
+# Search
+$route['s'] = $route['default_controller'] . '/search';
+
+$route['auteur/(:any)'] = $route['default_controller'] . '/auteur/$1';
 
 # pagination home
 $route['page/(:num)'] 	= $route['default_controller'] . '/index/$1';

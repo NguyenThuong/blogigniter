@@ -4,10 +4,12 @@ class Model_feed extends CI_Model{
 
 	function getRecentPosts()
 	{
-		$this->db->select('c_title, c_content, c_cdate, c_url_rw, r_title, r_description, r_url_rw')
+		$this->db->select('c_title, c_content, c_image, c_cdate, c_url_rw, r_title, r_description, r_url_rw')
 				 ->from('content')
 				 ->join('rubric', 'rubric.r_id = content.r_id')
-				 ->order_by('c_id', 'DESC')
+				 ->where('c_state', 1)
+				 ->where('c_cdate <', unix_to_human(now(), TRUE, 'eu') )
+				 ->order_by('c_cdate', 'DESC')
 				 ->limit(10);
 
 		$query = $this->db->get();

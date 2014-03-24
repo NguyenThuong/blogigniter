@@ -106,6 +106,43 @@ class CI_Pagination {
 
 	// --------------------------------------------------------------------
 
+	function number_page()
+	{
+		// Determine the current page number.
+	$CI =& get_instance();
+	// Set the base page index for starting page number
+	if ($this->use_page_numbers)
+	{
+		$base_page = 1;
+	}
+	else
+	{
+		$base_page = 0;
+	}
+
+	if ($CI->config->item('enable_query_strings') === TRUE OR $this->page_query_string === TRUE)
+	{
+		if ($CI->input->get($this->query_string_segment) != $base_page)
+		{
+			$this->cur_page = $CI->input->get($this->query_string_segment);
+
+			// Prep the current page - no funny business!
+			$this->cur_page = (int) $this->cur_page;
+		}
+	}
+	else
+	{
+		if ($CI->uri->segment($this->uri_segment) != $base_page)
+		{
+			$this->cur_page = $CI->uri->segment($this->uri_segment);
+
+			// Prep the current page - no funny business!
+			$this->cur_page = (int) $this->cur_page;
+		}
+	}
+	return $this->cur_page;
+}
+
 	/**
 	 * Generate the pagination links
 	 *
@@ -236,7 +273,14 @@ class CI_Pagination {
 		{
 			if ($this->use_page_numbers)
 			{
-				$i = $uri_page_number - 1;
+				if ($uri_page_number == 2)
+				{
+					$i = '';
+				}
+				else
+				{
+					$i = $uri_page_number - 1;
+				}
 			}
 			else
 			{

@@ -8,6 +8,7 @@
 					<th>Nb articles</th>
 					<th></th>
 					<th></th>
+					<th></th>
 				</tr>
 				<?php foreach ($query->result() as $row): ?>
 				<tr>
@@ -17,6 +18,7 @@
 					<td><?php echo ($this->model_content->get_content_by_rubric($row->r_id)->num_rows); ?> </td>
 					<td><a href="<?php echo base_url('admin/dashboard/edit_rubric/' . $row->r_id); ?>" title="Modifier"><i class="glyphicon glyphicon-pencil"></i></a></td>
 					<td><a href="<?php echo base_url('admin/dashboard/delete_rubric/' . $row->r_id); ?>" onclick="return deleteConfirm()" title="Supprimer" ><i class="glyphicon glyphicon-trash"></i></a></td>
+					<td><a href="<?php echo base_url($row->r_url_rw); ?>" title="Aperçu" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a></td>
 				</tr>
 				<?php endforeach; ?>
 			</table><!-- end .table .table-hover -->

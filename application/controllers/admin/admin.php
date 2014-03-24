@@ -6,7 +6,7 @@ class Admin extends CI_Controller {
 	{
 		parent::__construct();
 		// Chargement des ressources pour ce controller
-		$this->load->model('model_user');
+		$this->load->model(array('model_user', 'model_comment'));
 		$this->load->library(array('encrypt','session'));
 		$this->load->helper(array('functions'));
 		session_start();
@@ -27,7 +27,12 @@ class Admin extends CI_Controller {
 				$data['title'] = 'Connexion';
 				$this->load->view('admin/view_form_login', $data);
 			else:
+				$nb_comments = $this->model_comment->get_unmoderate_comments()->num_rows();
 				$this->session->set_flashdata('success', 'Bienvenue sur votre dashboard.');
+				if ($nb_comments > 0):
+					$this->session->set_flashdata('warning', '<a href="dashboard/comment"> '. $nb_comments . ' commentaire(s) non modéré(s)</a>');
+
+				endif;
 				// Redirection vers le dashboard
 				redirect(base_url('admin/dashboard'));
 				//echo 'ok';
@@ -54,7 +59,6 @@ class Admin extends CI_Controller {
 					'login' => $row->u_login,
 					'level' => $row->u_level
 				);
-				$u_id = $row->u_id;
 				// Création de la session
 				$this->session->set_userdata('logged_in', $sess_array);
 			endforeach;

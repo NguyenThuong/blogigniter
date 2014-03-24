@@ -1,29 +1,35 @@
-			<aside class="col-md-4 hidden-xs">
+			<aside class="col-md-3 hidden-xs">
 
-				<h3>About</h3>
-				<p>Lorem ipsum Eiusmod irure sint Ut magna incididunt ut esse eu enim consequat et mollit cupidatat irure veniam laborum veniam dolore amet in et aliqua deserunt occaecat laborum proident Ut officia sunt laboris laborum adipisicing reprehenderit anim proident quis.</p>
-				<?php if ($query_all_rubrics->num_rows > 0): ?>
-
-				<h3>Catégories (<?php echo $query_all_rubrics->num_rows(); ?>)</h3>
-				<ul class="unstyled">
-				<?php foreach ($query_all_rubrics->result() as $row): ?>
-					<li>
-						<a href="<?php echo base_url($row->r_url_rw); ?>" <?php if ($this->uri->segment(1) == $row->r_url_rw): echo 'title="Categorie actuelle"'; endif; ?>><?php echo $row->r_title; ?></a>
-					</li>
-				<?php endforeach; ?>
-				</ul>
+				<h3 style="margin-top: 0">About</h3>
+				<?php if (isset($about)): ?>
+				<?php echo $about; ?>
 				<?php endif; ?>
+
+				<h3>Recherche</h3>
+				<form action="<?php echo base_url('s'); ?>" method="get" role="search">
+					<input name="q" type="text" placeholder="Rechercher" required>
+					<input type="submit" value="Ok"/>
+				</form>
 
 				<?php if ($all_content->num_rows > 0): ?>
 				<h3>Archives (<?php echo $all_content->num_rows(); ?>) </h3>
-				<ul class="unstyled">
+				<ul class="list-unstyled">
  				<?php foreach ($all_content->result() as $row): ?>
 					<li><?php echo content_url($row->r_url_rw, $row->c_url_rw, $row->c_title); ?></li>
 				<?php endforeach;?>
 				</ul>
 				<?php endif; ?>
 
-				<h3>RSS</h3>
-				<a href="<?php echo base_url('rss'); ?>"><img src="assets/img/rss.png" alt="Flux RSS" /></a>
+				<?php if ($all_authors->num_rows > 0): ?>
+				<h3>Auteurs</h3>
+				<ul class="list-unstyled">
+ 				<?php foreach ($all_authors->result() as $row): ?>
+					<li><?php echo author_url($row->u_login); ?></li>
+				<?php endforeach;?>
+				</ul>
+				<?php endif; ?>
 
-			</aside><!-- end of .col-md-4 -->
+				<h3>RSS</h3>
+				<a href="<?php echo base_url('rss'); ?>"><img src="<?php echo base_url('assets/img/rss.jpg'); ?>" alt="Flux RSS" /></a>
+
+			</aside><!-- end of .col-md-3 -->

@@ -41,6 +41,14 @@ if ( ! function_exists('rubric_url'))
 	}
 }
 
+if ( ! function_exists('author_url'))
+	{
+	function author_url($author)
+	{
+		return '<a href="' . base_url('auteur/' . $author) . '">' . $author . '</a>';
+	}
+}
+
 if ( ! function_exists('date_fr'))
 {
 	function date_fr ($jour, $mois, $annee)
@@ -98,7 +106,7 @@ if ( ! function_exists('pagination_custom'))
 	{
 		// Paramètres de configuration
 		# Nombre d'articles par page
-		$config['per_page']         = 3;
+		$config['per_page']         = 4;
 		# Lister les pages par numéro (page 1, page 2, etc...)
 		$config['use_page_numbers'] = TRUE;
 

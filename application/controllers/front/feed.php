@@ -8,16 +8,16 @@ class Feed extends CI_Controller{
 		// Chargement des ressources pour ce controller
 		$this->load->helper('text');
 		$this->load->model('model_feed');
-		$this->load->helper(array('xml'));
-		$this->output->enable_profiler(TRUE);
+		$this->load->helper('xml');
 	}
 
 	public function index()
 	{
-		$data['feed_name']		  = 'monsite.com';
+		$data['site_name']		  = 'Mon blog';
+		$data['site_link']		  = base_url();
+		$data['site_description'] = 'Les flux RSS de mes articles';
 		$data['encoding']		  = 'utf-8';
 		$data['feed_url']		  = base_url() . '/feed';
-		$data['page_description'] = 'Les flux RSS de mes articles';
 		$data['page_language']    = 'fr-fr';
 		$data['posts']			  = $this->model_feed->getRecentPosts();
 		header("Content-Type: application/rss+xml");
