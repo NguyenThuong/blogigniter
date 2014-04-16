@@ -5,61 +5,57 @@ class Admin extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		// Chargement des ressources pour ce controller
-		$this->load->model(array('model_user', 'model_comment'));
-		$this->load->library(array('encrypt','session'));
+		$this->load->model(array('model_comment', 'model_user'));
+		$this->load->library(array('encrypt', 'form_validation', 'session', 'admin/functions'));
 		$this->load->helper(array('functions'));
 		session_start();
-		$this->output->enable_profiler(TRUE);
+		if (isset($_GET["profiler"])):
+			$this->output->enable_profiler(TRUE);
+		endif;
 	}
 
-	public function index()
+	public function index($toto = '')
 	{
-		if(!$this->session->userdata('logged_in')):
-			$this->load->library('form_validation');
+		if (!$this->session->userdata('logged_in')):
 
-			// Mise en place du formulaire
 			$this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_check_database');
 
-			// Si le formulaira n'est pas bon
 			if($this->form_validation->run() == FALSE):
 				$data['title'] = 'Connexion';
 				$this->load->view('admin/view_form_login', $data);
+
 			else:
 				$nb_comments = $this->model_comment->get_unmoderate_comments()->num_rows();
 				$this->session->set_flashdata('success', 'Bienvenue sur votre dashboard.');
-				if ($nb_comments > 0):
-					$this->session->set_flashdata('warning', '<a href="dashboard/comment"> '. $nb_comments . ' commentaire(s) non modéré(s)</a>');
 
+				if ($nb_comments > 0):
+					$this->session->set_flashdata('warning', '<a href="comments"> '. $nb_comments . ' commentaire(s) non modéré(s)</a>');
 				endif;
-				// Redirection vers le dashboard
-				redirect(base_url('admin/dashboard'));
-				//echo 'ok';
+
+				redirect(base_url('admin/content'));
+
 			endif;
 
-		elseif($this->session->userdata('logged_in')):
-			redirect(base_url('admin/dashboard'));
-		echo 'ok';
+		elseif ($this->session->userdata('logged_in')):
+			redirect(base_url('admin/content'));
 
 		endif;
 	}
 
-	// Vérification login / mot de passe dans la BDD
 	function check_database($password)
 	{
 		$login = $this->input->post('username');
 		$query = $this->model_user->login($login, $password);
 
-		if($query):
+		if ($query->num_rows() == 1):
 			$sess_array = array();
-			foreach($query as $row):
+			foreach ($query->result() as $row):
 				$sess_array = array(
 					'id'    => $row->u_id,
 					'login' => $row->u_login,
 					'level' => $row->u_level
 				);
-				// Création de la session
 				$this->session->set_userdata('logged_in', $sess_array);
 			endforeach;
 			return TRUE;
@@ -71,13 +67,39 @@ class Admin extends CI_Controller {
 		endif;
 	}
 
-	// Déconnexion du dashboard
 	public function logout()
 	{
 		$this->session->unset_userdata('logged_in');
 		$this->session->set_flashdata('success', 'Vous êtes désormais déconnecté(e).');
 		session_destroy();
 		redirect(base_url('admin'), 'refresh');
+	}
+
+	public function reset_password()
+	{
+		$data['title'] = 'Réinitialisation du mot de passe';
+		$this->form_validation->set_rules('u_email', 'Email', 'trim|required|xss_clean|valid_email');
+		$u_email = $this->input->post('u_email');
+
+		if ($this->form_validation->run() !== FALSE):
+
+			if ($this->model_user->check_email($u_email)->num_rows() == 1):
+				$new_pass = random_string('alnum', 10);
+				$this->model_user->reset_password($u_email, $new_pass);
+				echo $new_pass;
+				die();
+				@mail($u_email, 'Reset de votre mot de passe', 'Votre nouveau mot de passe est ' . $new_pass);
+				$this->session->set_flashdata('success', 'Vous allez recevoir un email avec votre nouveau mot de passe.');
+				redirect(base_url('admin'));
+
+			else:
+				$this->session->set_flashdata('alert', 'Cet email n\'existe pas.');
+				redirect(current_url());
+			endif;
+
+		endif;
+
+		$this->load->view('admin/view_form_reset', $data);
 	}
 
 }

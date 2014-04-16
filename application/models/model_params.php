@@ -2,43 +2,59 @@
 
 class Model_params extends CI_Model {
 
-	// Lire tous les paramètres
 	function get_params()
 	{
-		$this->db->select('p_title, p_about, p_m_description')
+		$this->db->select('p_title, p_about, p_m_description, p_email, p_nb_listing, p_nb_listing_f, p_twitter')
 				 ->from('params')
-				 ->where('p_id', 0);
+				 ->where('p_id', 0)
+				 ->limit(1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+	
+	function get_params2()
+	{
+		$this->db->select('p_nb_listing')
+				 ->from('params')
+				 ->where('p_id', 0)
+				 ->limit(1);
 
 		$query = $this->db->get();
 		return $query;
 	}
 
-	// Insérer les paramètres (1ère fois)
-	function insert_params($p_title, $p_m_description, $p_about)
+	function insert_params($p_title, $p_m_description, $p_about, $p_email, $p_nb_listing, $p_nb_listing_f, $p_twitter)
 	{
 		$data = array(
 			'p_id'			  => 0,
 			'p_title'		  => $p_title,
 			'p_m_description' => $p_m_description,
-			'p_about'		  => $p_about
+			'p_about'		  => $p_about,
+			'p_email'		  => $p_email,
+			'p_nb_listing'	  => $p_nb_listing,
+			'p_nb_listing_f'  => $p_nb_listing_f,
+			'p_twitter'		  => $p_twitter
 		);
 
 		$this->db->insert('params', $data);
 	}
 
-	// Mettre à jour les paramètres
-	function update_params($p_title, $p_m_description, $p_about)
+	function update_params($p_title, $p_m_description, $p_about, $p_email, $p_nb_listing, $p_nb_listing_f, $p_twitter)
 	{
 		$data = array(
 			'p_title'		  => $p_title,
 			'p_m_description' => $p_m_description,
-			'p_about'		  => $p_about
+			'p_about'		  => $p_about,
+			'p_email'		  => $p_email,
+			'p_nb_listing'	  => $p_nb_listing,
+			'p_nb_listing_f'  => $p_nb_listing_f,
+			'p_twitter'		  => $p_twitter
 		);
 
 		$this->db->where('p_id', 0);
 		$this->db->update('params', $data);
 	}
-
 
 }
 

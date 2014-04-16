@@ -2,7 +2,6 @@
 
 class Model_content extends CI_Model {
 
-	// Lire tous les articles
 	function get_contents($last_content, $state)
 	{
 		$this->db->select('c_id, c_title, c_content, c_image, c_state, c_cdate, c_udate, c_url_rw, content.r_id, r_title, r_url_rw, content.u_id, u_login');
@@ -21,10 +20,9 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Lire un article
 	function get_content($c_id, $c_title)
 	{
-		$this->db->select('c_id, content.r_id, content.u_id, c_title, c_content, c_image, c_state, c_url_rw');
+		$this->db->select('c_id, content.r_id, content.u_id, c_title, c_content, c_image, c_tags, c_state, c_url_rw');
 		$this->db->from('content');
 		$this->db->join('rubric', 'content.r_id = rubric.r_id');
 		$this->db->join('user', 'content.u_id = user.u_id');
@@ -39,7 +37,6 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Vérifie si l'article existe déjà
 	function check_title($c_id, $c_title)
 	{
 		$this->db->select('c_title')
@@ -51,7 +48,6 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Vérifie si une url est déjà existante
 	function check_url_rw($c_id, $c_url_rw)
 	{
 		$this->db->select('c_url_rw')
@@ -63,8 +59,7 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Créer un article
-	function create_content($r_id, $u_id, $c_title, $c_content, $c_image, $c_state, $c_url_rw)
+	function create_content($r_id, $u_id, $c_title, $c_content, $c_image, $c_tags, $c_state, $c_url_rw)
 	{
 		$data = array(
 			'r_id'  	=> $r_id,
@@ -72,6 +67,7 @@ class Model_content extends CI_Model {
 			'c_title' 	=> $c_title,
 			'c_content' => $c_content,
 			'c_image' 	=> $c_image,
+			'c_tags' 	=> $c_tags,
 			'c_state'   => $c_state,
 			'c_cdate' 	=> unix_to_human(now(), TRUE, 'eu'),
 			'c_udate'   => unix_to_human(now(), TRUE, 'eu'),
@@ -81,8 +77,7 @@ class Model_content extends CI_Model {
 		$this->db->insert('content', $data);
 	}
 	
-	// Mettre à jour un article
-	function update_content($r_id, $u_id, $c_title, $c_content, $c_image, $c_state, $c_url_rw, $c_udate, $c_id)
+	function update_content($r_id, $u_id, $c_title, $c_content, $c_image, $c_tags, $c_state, $c_url_rw, $c_udate, $c_id)
 	{
 		if ($c_udate === TRUE):
 		$data = array(
@@ -91,6 +86,7 @@ class Model_content extends CI_Model {
 			'c_title' 	=> $c_title,
 			'c_content' => $c_content,
 			'c_image' 	=> $c_image,
+			'c_tags'	=> $c_tags,
 			'c_state'	=> $c_state,
 			'c_url_rw'	=> $c_url_rw,
 			'c_udate'   => unix_to_human(now(), TRUE, 'eu')
@@ -102,6 +98,7 @@ class Model_content extends CI_Model {
 			'c_title' 	=> $c_title,
 			'c_content' => $c_content,
 			'c_image' 	=> $c_image,
+			'c_tags' 	=> $c_tags,
 			'c_state'	=> $c_state,
 			'c_url_rw'	=> $c_url_rw
 		);
@@ -111,7 +108,6 @@ class Model_content extends CI_Model {
 		$this->db->update('content', $data);
 	}
 
-	// Supprimer un article :
 	function delete_content($c_id)
 	{
 		$this->db->where('c_id', $c_id)
@@ -119,7 +115,7 @@ class Model_content extends CI_Model {
 	}
 
 
-	// Obtenir les articles pour le listing (pagination)
+	// Get content for listing
 	function get_contents_listing($u_login, $numero_page, $per_page)
 	{
 		if (!empty($u_login)):
@@ -127,7 +123,7 @@ class Model_content extends CI_Model {
 		else:
 			$author = '';
 		endif;
-		$this->db->select('c_title, c_content, c_image, c_cdate, c_url_rw, r_title, r_url_rw ' . $author . '');
+		$this->db->select('c_title, c_content, c_image, c_tags, c_cdate, c_url_rw, r_title, r_url_rw ' . $author . '');
 		$this->db->from('content');
 		$this->db->join('rubric', 'rubric.r_id = content.r_id');
 		if ($u_login):
@@ -140,7 +136,7 @@ class Model_content extends CI_Model {
 
 		if ($numero_page and $per_page):
 			$this->db->limit($per_page, ($numero_page-1) * $per_page);
-		elseif($per_page):
+		elseif ($per_page):
 			$this->db->limit($per_page);
 		endif;
 
@@ -148,10 +144,10 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Obtenir un article en particulier (via son slug) pour le content
+	// Get content for a content
 	function get_content_by_slug($slug_rubric, $slug_content)
 	{
-		$this->db->select('c_id, c_title, c_content, c_image, c_cdate, c_udate, c_url_rw, r_title, r_url_rw, user.u_id, u_login, u_biography')
+		$this->db->select('c_id, c_title, c_content, c_image, c_tags, c_cdate, c_udate, c_url_rw, r_title, r_url_rw, user.u_id, u_login, u_biography')
 				 ->from('content')
 				 ->join('rubric', 'content.r_id = rubric.r_id')
 				 ->join('user', 'content.u_id = user.u_id')
@@ -164,7 +160,6 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Obtenir les autres articles
 	function get_contents_others($slug_content)
 	{
 		$this->db->select('c_title, c_url_rw, r_url_rw')
@@ -179,7 +174,6 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Obtenir les autres articles de la même rubrique
 	function get_contents_same_rubric($slug_rubric, $slug_content)
 	{
 		$this->db->select('c_title, c_url_rw, r_url_rw')
@@ -195,10 +189,9 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Obtenir les rubriques pour le listing (via son slug)
 	function get_contents_rubric_listing($slug_rubric, $numero_page, $per_page)
 	{
-		$this->db->select('c_title, c_content, c_image, c_cdate, c_url_rw, r_title, r_description, r_url_rw');
+		$this->db->select('c_title, c_content, c_image, c_tags, c_cdate, c_url_rw, r_title, r_description, r_url_rw');
 		$this->db->from('content');
 		$this->db->join('rubric', 'rubric.r_id = content.r_id');
 		$this->db->where('rubric.r_url_rw', $slug_rubric);
@@ -207,7 +200,7 @@ class Model_content extends CI_Model {
 		$this->db->order_by('content.c_id', 'DESC');
 		if ($numero_page and $per_page):
 			$this->db->limit($per_page, ($numero_page-1) * $per_page);
-		elseif($per_page):
+		elseif ($per_page):
 			$this->db->limit($per_page);
 		endif;
 
@@ -215,7 +208,6 @@ class Model_content extends CI_Model {
 		return $query;
 	} 
 
-	// Le contenu dans une rubrique spécifique
 	function get_content_by_rubric($r_id)
 	{
 		$this->db->select('c_id, c_title')
@@ -227,7 +219,6 @@ class Model_content extends CI_Model {
 		return $query;
 	}
 
-	// Le contenu rédigié par un utilistateur
 	function get_content_by_user($u_id, $limit)
 	{
 		$this->db->select('c_id, c_title, c_content, c_state, c_cdate, c_udate, c_url_rw, rubric.r_id, r_title, r_url_rw');
@@ -244,6 +235,47 @@ class Model_content extends CI_Model {
 		$query = $this->db->get();
 		return $query;
 	}
+
+	// tags
+	function get_content_by_tag_name($t_name, $numero_page, $per_page)
+	{
+		$this->db->select('*');
+		$this->db->from('content');
+		$this->db->join('rubric', 'content.r_id = rubric.r_id');
+		$this->db->like('c_tags', $t_name);
+		$this->db->where('c_state', 1);
+		$this->db->order_by('c_id', 'DESC');
+
+		if ($numero_page and $per_page):
+			$this->db->limit($per_page, ($numero_page-1) * $per_page);
+		elseif ($per_page):
+			$this->db->limit($per_page);
+		endif;		 
+
+		$query = $this->db->get();
+		return $query;
+	}
+
+	function get_tags()
+	{
+
+		$select = 'c_tags,
+				  GROUP_CONCAT(DISTINCT c_tags
+				  ORDER BY c_tags DESC SEPARATOR "") as tags';
+
+		$this->db->select($select);
+		$this->db->from('content');
+		$this->db->where('c_state', 1);
+
+/*		$this->db->distinct()
+				 ->select('c_tags')
+				 ->from('content')
+				 ->where('c_state', 1);*/
+
+		$query = $this->db->get();
+		return $query;		
+	}
+
 
 }
 

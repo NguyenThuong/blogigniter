@@ -5,7 +5,11 @@
 		<title><?php echo $meta_title; ?></title>
 		<meta name="description" content="<?php echo $meta_desc; ?>" />
 		<?php if ($page !== '404'): ?>
+    <?php if ($page == 'search'): ?>
+    <link rel="canonical" href="<?php echo base_url('s?q=' . $research); ?>" />
+    <?php else: ?>
 		<link rel="canonical" href="<?php echo current_url(); ?>" />
+    <?php endif; ?>
 		<?php endif; ?>
 		<?php if (isset($meta_pagination)): ?>
 			<?php echo $meta_pagination; ?>

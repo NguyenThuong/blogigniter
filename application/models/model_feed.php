@@ -2,7 +2,7 @@
 
 class Model_feed extends CI_Model{
 
-	function getRecentPosts()
+	function getRecentPosts($limit)
 	{
 		$this->db->select('c_title, c_content, c_image, c_cdate, c_url_rw, r_title, r_description, r_url_rw')
 				 ->from('content')
@@ -10,7 +10,7 @@ class Model_feed extends CI_Model{
 				 ->where('c_state', 1)
 				 ->where('c_cdate <', unix_to_human(now(), TRUE, 'eu') )
 				 ->order_by('c_cdate', 'DESC')
-				 ->limit(10);
+				 ->limit($limit);
 
 		$query = $this->db->get();
 		return $query;

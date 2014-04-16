@@ -19,7 +19,7 @@
 	</div><!-- end .form-group -->
 	<?php endif; ?>
 
-	<input type="submit" class="btn btn-default" value="<?php if ($page == 'add_rubric') echo 'Ajouter'; else echo 'Modifier'; ?>" />
+	<input type="submit" class="btn btn-success" value="<?php if ($page == 'add_rubric') echo 'Ajouter'; else echo 'Modifier'; ?>" />
 
 	<?php if ($page == 'edit_rubric'): ?>
 		<?php if ($content->num_rows > 0): ?>

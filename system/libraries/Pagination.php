@@ -56,7 +56,7 @@ class CI_Pagination {
 	var $num_tag_open		= '&nbsp;';
 	var $num_tag_close		= '';
 	var $page_query_string	= FALSE;
-	var $query_string_segment = 'per_page';
+	var $query_string_segment = 'page';
 	var $display_pages		= TRUE;
 	var $anchor_class		= '';
 

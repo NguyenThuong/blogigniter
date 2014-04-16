@@ -20,13 +20,13 @@
 				<?php foreach($query->result() as $row): ?>
 				<tr>
 					<td><?php echo $row->c_id; ?></td>
-					<td><a href="<?php echo base_url('admin/dashboard/edit/' . $row->c_id); ?>" title="Modifier"><?php echo $row->c_title; ?></a></td>
-					<td><?php echo character_limiter($row->c_content, 64); ?></td>
-					<td><a href="<?php echo base_url('admin/dashboard/edit_rubric/' . $row->r_id); ?>"><?php echo $row->r_title; ?></a></td>
+					<td><a href="<?php echo base_url('admin/content/edit/' . $row->c_id); ?>" title="Modifier"><?php echo $row->c_title; ?></a></td>
+					<td><?php echo strip_tags(character_limiter($row->c_content, 64)); ?></td>
+					<td><a href="<?php echo base_url('admin/rubric/edit/' . $row->r_id); ?>"><?php echo $row->r_title; ?></a></td>
 					<td><?php echo date("d/m/Y à H:i:s", strtotime($row->c_cdate)); ?></td>
 					<td><?php echo date("d/m/Y à H:i:s", strtotime($row->c_udate)); ?></td>
 					<?php if ($page == 'home'): ?>
-					<td><a href="<?php echo base_url('admin/dashboard/author/' . $row->u_id); ?>" title="Afficher tous ces articles"><?php echo $row->u_login; ?></a></td>
+					<td><a href="<?php echo base_url('admin/user/' . $row->u_id); ?>" title="Afficher tous ces articles"><?php echo $row->u_login; ?></a></td>
 					<?php endif; ?>
 					<td>
 					<?php 
@@ -46,8 +46,8 @@
 					?>
 					</td>
 					<td><?php echo ($this->model_comment->get_comment($row->c_id)->num_rows); ?></td>
-					<td><a href="<?php echo base_url('admin/dashboard/edit/' . $row->c_id); ?>" title="Modifier"><i class="glyphicon glyphicon-pencil"></i></a></td>
-					<td><a href="<?php echo base_url('admin/dashboard/delete/' . $row->c_id); ?>" onclick="return deleteConfirm()" title="Supprimer"><i class="glyphicon glyphicon-trash"></i></a></td>
+					<td><a href="<?php echo base_url('admin/content/edit/' . $row->c_id); ?>" title="Modifier"><i class="glyphicon glyphicon-pencil"></i></a></td>
+					<td><a href="<?php echo base_url('admin/content/delete/' . $row->c_id); ?>" onclick="return deleteConfirm()" title="Supprimer"><i class="glyphicon glyphicon-trash"></i></a></td>
 					<td><a href="<?php echo base_url($row->r_url_rw . '/' . $row->c_url_rw); ?>" title="Aperçu" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a></td>
 				</tr>
 				<?php endforeach; ?>

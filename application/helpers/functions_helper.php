@@ -1,27 +1,27 @@
 <?php
 if ( ! function_exists('css_url'))
 {
-	function css_url($nom)
+	function css_url($file_name)
 	{
-		return '<link rel="stylesheet" href="' . base_url() . 'assets/css/' . $nom . '.css" />
-';
+		return '<link rel="stylesheet" href="' . base_url() . 'assets/css/' . $file_name . '.css" />
+	';
 	}
 }
 
 if ( ! function_exists('js_url'))
 {
-	function js_url($nom)
+	function js_url($file_name)
 	{
-		return '<script src="' . base_url() . 'assets/js/' . $nom . '.js"></script>
-';
+		return '<script src="' . base_url() . 'assets/js/' . $file_name . '.js"></script>
+	';
 	}
 }
 
 if ( ! function_exists('content_url'))
 {
-	function content_url($rubric, $content, $titre)
+	function content_url($rubric, $content, $title)
 	{
-		return '<a href="' . base_url($rubric . '/' . $content) . '">' . $titre . '</a>';
+		return '<a href="' . base_url($rubric . '/' . $content) . '">' . $title . '</a>';
 	}
 }
 
@@ -34,24 +34,52 @@ if ( ! function_exists('content_url_button'))
 }
 
 if ( ! function_exists('rubric_url'))
+{
+	function rubric_url($rubric, $title)
 	{
-	function rubric_url($rubric, $titre)
-	{
-		return '<a href="' . base_url($rubric) . '">' . $titre . '</a>';
+		return '<a href="' . base_url($rubric) . '">' . $title . '</a>';
 	}
 }
 
 if ( ! function_exists('author_url'))
-	{
+{
 	function author_url($author)
 	{
 		return '<a href="' . base_url('auteur/' . $author) . '">' . $author . '</a>';
 	}
 }
 
+if ( ! function_exists('tag_url'))
+{
+	function tag_url($tag)
+	{	
+		if ($tag != ''):
+			return '<a href="' . base_url('t?q=' . $tag) . '">' . $tag . '</a> ';
+		endif;
+	}
+}
+
+if ( ! function_exists('img_thumb') )
+{
+	function img_thumb($image)
+	{
+		return '<img src="' . $image . '" alt="" class="img-responsive" style="margin: 0 auto; text-align: center;" />';
+	}
+}
+
+if ( ! function_exists('img_thumb_url') )
+{
+	function img_thumb_url($rubric, $content, $image)
+	{
+		return '<a href="' . base_url($rubric . '/' . $content).'">
+					<img src="' . $image . '" alt="" class="img-responsive" style="margin: 0 auto; text-align: center;" />
+				</a>';
+	}
+}
+
 if ( ! function_exists('date_fr'))
 {
-	function date_fr ($jour, $mois, $annee)
+	function date_fr($jour, $mois, $annee)
 	{
 		$mois_n = $mois;
 		switch ($mois) {
@@ -104,13 +132,18 @@ if ( ! function_exists('pagination_custom'))
 {
 	function pagination_custom()
 	{
-		// Paramètres de configuration
-		# Nombre d'articles par page
-		$config['per_page']         = 4;
-		# Lister les pages par numéro (page 1, page 2, etc...)
+		$CI =& get_instance();
+
+		$p_nb_listing = $CI->model_params->get_params2()->result();
+		if (!empty($p_nb_listing)):
+			$p_nb_listing = $p_nb_listing['0']->p_nb_listing;
+		else:
+			$p_nb_listing = 5;
+		endif;
+
+		$config['per_page']         = $p_nb_listing;
 		$config['use_page_numbers'] = TRUE;
 
-		# HTML entre les digits
 		$config['full_tag_open']    = '<ul class="pagination">';
 		$config['full_tag_close']   = '</ul><!--pagination-->';
 		$config['num_tag_open']     = '<li>';
@@ -128,4 +161,9 @@ if ( ! function_exists('pagination_custom'))
 
 		return $config;
 	}
+
 }
+
+
+/* End of file functions_helper.php */
+/* Location: ./application/helpers/functions_helper.php */

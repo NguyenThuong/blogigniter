@@ -35,17 +35,17 @@
 					</td>
 					<td><?php 
 							if ($row->com_status == 0): 
-								echo "<a href=".base_url('admin/dashboard/moderate_comment/'.$row->com_id).">Modérer</a>";
+								echo "<a href=".base_url('admin/comments/moderate/'.$row->com_id).">Modérer</a>";
 								echo ' - ';
-								echo "<a href=".base_url('admin/dashboard/desactivate_comment/'.$row->com_id).">Désactiver</a>";
+								echo "<a href=".base_url('admin/comments/desactivate/'.$row->com_id).">Désactiver</a>";
 							elseif ($row->com_status == 2):
-								echo "<a href=".base_url('admin/dashboard/moderate_comment/'.$row->com_id).">Réactiver</a>";	
+								echo "<a href=".base_url('admin/comments/moderate/'.$row->com_id).">Réactiver</a>";	
 							else:
-								echo "<a href=".base_url('admin/dashboard/desactivate_comment/'.$row->com_id).">Désactiver</a>";
+								echo "<a href=".base_url('admin/comments/desactivate/'.$row->com_id).">Désactiver</a>";
 							endif;
 						?>
 					</td>
-					<td><a href="<?php echo base_url('admin/dashboard/delete_comment/' . $row->com_id); ?>" onclick="return deleteConfirm()" title="Supprimer"><i class="glyphicon glyphicon-trash"></i></a></td>
+					<td><a href="<?php echo base_url('admin/comments/delete/' . $row->com_id); ?>" onclick="return deleteConfirm()" title="Supprimer"><i class="glyphicon glyphicon-trash"></i></a></td>
 				</tr>
 				<?php endforeach; ?>
 			</table><!-- end .table .table-hover -->

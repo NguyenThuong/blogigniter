@@ -13,11 +13,11 @@
 				<?php foreach ($query->result() as $row): ?>
 				<tr>
 					<td><?php echo $row->r_id; ?></td>
-					<td><a href="<?php echo base_url('admin/dashboard/edit_rubric/' . $row->r_id); ?>" title="Modifier"><?php echo $row->r_title; ?></a></td>
+					<td><a href="<?php echo base_url('admin/rubric/edit/' . $row->r_id); ?>" title="Modifier"><?php echo $row->r_title; ?></a></td>
 					<td><?php echo character_limiter($row->r_description, 64); ?></td>
 					<td><?php echo ($this->model_content->get_content_by_rubric($row->r_id)->num_rows); ?> </td>
-					<td><a href="<?php echo base_url('admin/dashboard/edit_rubric/' . $row->r_id); ?>" title="Modifier"><i class="glyphicon glyphicon-pencil"></i></a></td>
-					<td><a href="<?php echo base_url('admin/dashboard/delete_rubric/' . $row->r_id); ?>" onclick="return deleteConfirm()" title="Supprimer" ><i class="glyphicon glyphicon-trash"></i></a></td>
+					<td><a href="<?php echo base_url('admin/rubric/edit/' . $row->r_id); ?>" title="Modifier"><i class="glyphicon glyphicon-pencil"></i></a></td>
+					<td><a href="<?php echo base_url('admin/rubric/delete/' . $row->r_id); ?>" onclick="return deleteConfirm()" title="Supprimer" ><i class="glyphicon glyphicon-trash"></i></a></td>
 					<td><a href="<?php echo base_url($row->r_url_rw); ?>" title="Aperçu" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a></td>
 				</tr>
 				<?php endforeach; ?>

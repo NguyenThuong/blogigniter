@@ -6,6 +6,11 @@
 		<meta name="description" content="<?php echo $title ; ?>" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<?php echo css_url('bootstrap.min'); ?>
+		<?php 
+		if ($page == 'add_content' or $page == 'edit_content'):
+		 	echo css_url('redactor');
+		endif; 
+		?>
 	</head>
 
 
@@ -20,42 +25,58 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button><!-- end .navbar-toggle -->
-				<a class="navbar-brand" href="<?php echo base_url('admin/dashboard'); ?>">Dashboard</a>
+				<a class="navbar-brand" href="<?php echo base_url('admin/content'); ?>">Dashboard</a>
 			</div><!-- end .navbar-header -->
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li <?php if ($page == 'home' or $page == 'add_content' or $page == 'edit_content' or $page == 'author'){ echo "class='active'"; }; ?>>
-						<a href="<?php echo base_url('admin/dashboard'); ?>" class="dropdown-toggle">Articles</a>
+						<a href="<?php echo base_url('admin/content'); ?>" class="dropdown-toggle">Articles</a>
 					</li>
 					<li <?php if ($page == 'rubric' or $page == 'add_rubric' or $page == 'edit_rubric'){ echo "class='active'"; }; ?>>
-						<a href="<?php echo base_url('admin/dashboard/rubric'); ?>">Rubriques</a>
+						<a href="<?php echo base_url('admin/rubric'); ?>">Rubriques</a>
 					</li>
 					<li <?php if ($page == 'comment' or $page == 'add_comment' or $page == 'edit_comment'){ echo "class='active'"; }; ?>>
-						<a href="<?php echo base_url('admin/dashboard/comment'); ?>">Commentaires 
+						<a href="<?php echo base_url('admin/comments'); ?>">Commentaires 
 						<?php if (!empty($nb_comments)): ?>
 							(<b><?php echo $nb_comments; ?></b>)
 						<?php endif; ?>
 						</a>
 					</li>
 					<li <?php if ($page == 'users' or $page == 'add_user' or $page == 'edit_user'){ echo "class='active'"; }; ?>>
-						<a href="<?php echo base_url('admin/dashboard/users'); ?>">Utilisateurs</a>
+						<a href="<?php echo base_url('admin/user'); ?>">Utilisateurs</a>
 					</li>
 					<li <?php if ($page == 'gallery'){ echo "class='active'"; }; ?>>
-						<a href="<?php echo base_url('admin/dashboard/gallery'); ?>">Galerie</a>
+						<a href="<?php echo base_url('admin/medias'); ?>">Galerie</a>
 					</li>
 				</ul><!-- end .nav navbar-nav -->
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="<?php echo base_url(); ?>" target="_blank">Le blog</a></li>
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $login; ?> <b class="caret"></b></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $user_data['login']; ?> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<?php if ($level == 1): ?>
-							<li><a href="<?php echo base_url('admin/dashboard/params'); ?>">Paramêtres</a></li>
-							<li><a href="<?php echo base_url('admin/dashboard/search'); ?>">Mots recherches</a></li>
+							<?php if ($user_data['level'] == 1): ?>
+							<li>
+								<a href="<?php echo base_url('admin/params'); ?>">
+									<i class="glyphicon glyphicon-cog"></i> Paramêtres
+								</a>
+							</li>
+							<li>
+								<a href="<?php echo base_url('admin/search'); ?>">
+									<i class="glyphicon glyphicon-search"></i> Mots recherches
+								</a>
+							</li>
 							<?php endif; ?>
-							<li><a href="<?php echo base_url('admin/dashboard/change_password'); ?>">Changer mot de passe</a></li>
-							<li><a href="<?php echo base_url('admin/logout'); ?>">Se déconnecter</a></li>
+							<li>
+								<a href="<?php echo base_url('admin/user/change_password'); ?>">
+									<i class="glyphicon glyphicon-user"></i> Changer mot de passe
+								</a>
+							</li>
+							<li>
+								<a href="<?php echo base_url('admin/logout'); ?>">
+									<i class="glyphicon glyphicon-off"></i> Se déconnecter
+								</a>
+							</li>
 						</ul><!-- end .dropdown-menu -->
 					</li><!-- end .dropdown -->
 				</ul><!-- end .nav .navbar-nav .navbar-right -->
@@ -93,43 +114,35 @@
 			<section>
 				<ul class="list-inline">
 					<li>
-						<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit'); ?>'" class="btn btn-danger">
+						<button onClick="window.location.href='<?php echo base_url('admin/content/edit'); ?>'" class="btn btn-danger">
 							<i class="glyphicon glyphicon-plus"></i> Ajouter un article
 						</button>
 					</li>
 					<li>
-						<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit_rubric'); ?>'" class="btn btn-primary">
+						<button onClick="window.location.href='<?php echo base_url('admin/rubric/edit'); ?>'" class="btn btn-primary">
 							<i class="glyphicon glyphicon-plus"></i> Ajouter une rubrique
 						</button>
 					</li>
-					<?php if ($level == 1): ?>
+					<?php if ($user_data['level'] == 1): ?>
 					<li>
-						<button onClick="window.location.href='<?php echo base_url('admin/dashboard/edit_user'); ?>'" class="btn">
+						<button onClick="window.location.href='<?php echo base_url('admin/user/edit'); ?>'" class="btn">
 							<i class="glyphicon glyphicon-plus"></i> Ajouter un utilisateur
 						</button>
 					</li>
 					<?php endif; ?>
 					<li>
-						<?php if (current_url() !== base_url('admin/dashboard/author/'.$id_user)): ?>
-						<a href="<?php echo base_url('admin/dashboard/author/' . $id_user); ?>">
-							Mes articles (<?php echo ($this->model_content->get_content_by_user($id_user, '')->num_rows); ?>)
+						<?php if (current_url() !== base_url('admin/user/' . $user_data['id_user'])): ?>
+						<a href="<?php echo base_url('admin/user/' . $user_data['id_user']); ?>">
+							Mes articles (<?php echo ($this->model_content->get_content_by_user($user_data['id_user'], '')->num_rows); ?>)
 						</a>
 						<?php else:?>
-						<a href="<?php echo base_url('admin/dashboard'); ?>">Tous les articles</a>
+						<a href="<?php echo base_url('admin/content'); ?>">Tous les articles</a>
 						<?php endif; ?>
-					</li>
-				</ul><!-- end of .col-md-2 .nav-stacked -->
-			</section>
 
-			<!-- <section>
-				<h3>Statistiques</h3>
-				<ul class="unstyled">
-					<li><?php echo $stats['articles']; ?> articles</li>
-					<li><?php echo $stats['rubriques'] ?> rubriques</li>
-					<li><?php echo $stats['utilisateurs'] ?> utilisateurs</li>
+					</li>
 				</ul>
 			</section>
- -->
+
 		</div><!-- end of .col-md-12 -->
 
 	</div><!-- end of .row -->
@@ -197,7 +210,7 @@
 
 	<footer>
 		<footer data-role="footer">
-			<p class="footer" style="text-align: center">Propulsé par Codeigniter - Temps d'exécution : <strong>{elapsed_time}</strong> seconds</p>
+			<p class="footer" style="text-align: center"><br />Propulsé par Codeigniter - Temps d'exécution : <strong>{elapsed_time}</strong> seconds</p>
 		</footer>
 	</footer>
 
@@ -207,14 +220,26 @@
 		if ($page == 'add_content'):
 		echo js_url('bootstrap-datepicker');
 	?>
+
 	<script>
 		$('#datetimepicker input').datepicker({
 	});
 	</script>
+		<script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+
 	<?php
 		endif;
 		if ($page == 'add_content' || $page == 'edit_content'):
+			echo js_url('redactor.min');
+			echo js_url('bootstrap-tagsinput.min');
 	?>
+
+	<script>
+		$(function()
+		{
+			$('#c_content').redactor();
+		});
+	</script>
 	<script>
 		$('.get-img').fadeOut(0);
 

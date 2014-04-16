@@ -2,7 +2,6 @@
 
 class Model_rubric extends CI_Model {
 
-	// Obtenir toutes les rubriques
 	function get_rubrics()
 	{
 		$this->db->select('r_id, r_title, r_description, r_url_rw')
@@ -13,7 +12,6 @@ class Model_rubric extends CI_Model {
 		return $query;
 	}
 
-	// Lire une rubrique
 	function get_rubric($r_id, $r_title)
 	{
 		$this->db->select('r_title, r_description, r_url_rw');
@@ -29,7 +27,6 @@ class Model_rubric extends CI_Model {
 		return $query;
 	}
 
-	// Vérifie si la rubrique existe déjà
 	function check_title($r_id, $r_title)
 	{
 		$this->db->select('r_title')
@@ -41,7 +38,6 @@ class Model_rubric extends CI_Model {
 		return $query;
 	}
 
-	// Vérifie si une url est déjà existante
 	function check_url_rw($r_id, $r_url_rw)
 	{
 		$this->db->select('r_url_rw')
@@ -53,7 +49,6 @@ class Model_rubric extends CI_Model {
 		return $query;
 	}
 
-	// Créer une rubrique
 	function create_rubric($r_title, $r_description, $r_url_rw)
 	{
 		$data = array(
@@ -65,7 +60,6 @@ class Model_rubric extends CI_Model {
 		$this->db->insert('rubric', $data);
 	}
 
-	// Mettre à jour une rubrique
 	function update_rubric($r_title, $r_description, $r_url_rw, $r_id)
 	{
 		$data = array(
@@ -78,14 +72,12 @@ class Model_rubric extends CI_Model {
 		$this->db->update('rubric', $data);
 	}
 
-	// Supprimer une rubrique
 	function delete_rubric($r_id)
 	{
 		$this->db->where('r_id', $r_id)
 				 ->delete('rubric');
 	}
 
-	// Obtenir toutes les rubriques
 	function get_rubrics_front()
 	{
 		$get_rubrics = $this->db->distinct()
@@ -100,21 +92,21 @@ class Model_rubric extends CI_Model {
 			$r_id[0] = current($r_id);
 		endforeach;
 
-		$first = current($r_id);
-		$explode = explode(" OR", $first);
+		$first 	  = current($r_id);
+		$explode  = explode(" OR", $first);
 		$first_id = $explode[1];
-		$params = implode('', $r_id );
+		$params   = implode('', $r_id );
 
 		$query = $this->db->query('SELECT r_id, r_title, r_description, r_url_rw
-								   FROM rubric
-								   WHERE ' . $first_id . ' ' . $params . ' ORDER BY r_title ASC');
+FROM rubric
+WHERE ' . $first_id . ' ' . $params . ' 
+ORDER BY r_title ASC');
 		return $query;
 
 	}
 
-
 }
 
 
-/* End of file model_user.php */
-/* Location: ./application/models/admin/model_user.php */
+/* End of file model_tags.php */
+/* Location: ./application/models/admin/model_tags.php */

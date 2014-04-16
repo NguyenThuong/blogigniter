@@ -14,19 +14,19 @@
 		<dc:language><?php echo $page_language; ?></dc:language>
 		<dc:rights>Copyright <?php echo gmdate("Y", time()); ?></dc:rights>
 
-		<?php foreach($posts->result() as $post): ?>
+		<?php foreach ($posts->result() as $row): ?>
 		<item>
-			<title><?php echo xml_convert($post->c_title); ?></title>
-			<link><?php echo base_url($post->r_url_rw . '/' . $post->c_url_rw); ?></link>
-			<guid><?php echo base_url($post->r_url_rw . '/' . $post->c_url_rw); ?></guid>
-			<?php $post->c_content = strip_tags($post->c_content); ?>
+			<title><?php echo xml_convert($row->c_title); ?></title>
+			<link><?php echo base_url($row->r_url_rw . '/' . $row->c_url_rw); ?></link>
+			<guid><?php echo base_url($row->r_url_rw . '/' . $row->c_url_rw); ?></guid>
+			<?php $c_content = strip_tags($row->c_content); ?>
 			<description>
-				<?php if (!empty($post->c_image)): ?>
-					<img src="<?php echo $post->c_image; ?>" alt="" class="img-responsive" style="margin: 0 auto;" width="280px" heigth="120px" />
+				<?php if (!empty($row->c_image)): ?>
+					<img src="<?php echo $row->c_image; ?>" alt="" class="img-responsive" style="margin: 0 auto;" width="280px" heigth="120px" />
 				<?php endif; ?>
-				<?php echo $post->c_content; ?>
+				<?php echo $c_content; ?>
 			</description>
-			<?php $date = strtotime($post->c_cdate); // Conversion date to timestamp ?>
+			<?php $date = strtotime($row->c_cdate); ?>
 			<pubDate><?php echo date('r', $date);?></pubDate>
 		</item>
 		<?php endforeach; ?>

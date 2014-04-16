@@ -5,6 +5,12 @@
 	<div class="row">
 
 		<div class="row">
+
+			<select name="" id="type">
+				<option value="article">Article</option>
+				<option value="diaporama">Diaporama</option>
+			</select>
+
 			<div class="col-md-6">
 				<div class="form-group">
 					<p>Etat</p>
@@ -17,29 +23,29 @@
 					<?php endforeach; ?>
 				</div><!-- end .form-group -->
 
-			<?php if ($page == 'edit_content'): ?>
-				<input type="checkbox" name="c_udate" id="c_udate" value="1" <?php echo set_checkbox('c_udate', '1'); ?> checked="checked" />
-				<label for="c_udate">Mettre à jour la date de modification</label>
+		<?php if ($page == 'edit_content'): ?>
+			<input type="checkbox" name="c_udate" id="c_udate" value="1" <?php echo set_checkbox('c_udate', '1'); ?> checked="checked" />
+			<label for="c_udate">Mettre à jour la date de modification</label>
+		</div>
+		<div class="col-md-6 text-right">
+			<p class="show-img">
+				Image actuelle
+				<br />
+				<?php if (!empty($c_image)): ?>
+				<img  src="<?php echo $c_image; ?>" alt="" width="128px" heigth="128" />
+				<?php else: ?>
+				<em>Aucune image</em>
+				<?php endif; ?>
+			</p>
+		</div>
+		
+		<?php else: ?>
+			<div id="datetimepicker" class="form-group" data-date="<?php echo date("d-m-y"); ?>" data-date-format="dd-mm-yyyy">
+			<label for="c_cdate">Date de l'article</label>
+				<input type="text" class="form-control" name="c_cdate" id="c_cdate" value="">
+			</div><!-- end .form-group -->
 			</div>
-			<div class="col-md-6 text-right">
-				<p class="show-img">
-					Image actuelle
-					<br />
-					<?php if (!empty($c_image)): ?>
-					<img  src="<?php echo $c_image; ?>" alt="" width="128px" heigth="128" />
-					<?php else: ?>
-					<em>Aucune image</em>
-					<?php endif; ?>
-				</p>
-			</div>
-			
-			<?php else: ?>
-				<div id="datetimepicker" class="form-group" data-date="<?php echo date("d-m-y"); ?>" data-date-format="dd-mm-yyyy">
-				<label for="c_cdate">Date de l'article</label>
-					<input type="text" class="form-control" name="c_cdate" id="c_cdate" value="">
-				</div><!-- end .form-group -->
-				</div>
-			<?php endif; ?>
+		<?php endif; ?>
 		</div>
 
 		<div class="form-group">
@@ -56,7 +62,7 @@
 						$link_image = base_url($var . '/' . $image['name']);
 					?>
 					<input type="radio" name="c_image" id="<?php echo $image['name']; ?>" value="<?php echo $link_image; ?>" <?php if(isset($c_image) && $c_image == $link_image) echo 'checked="checked"'; ?>>
-					<label for="<?php echo $image['name']; ?>"><img class="img-thumbnail" src="<?php echo $link_image; ?>" alt="<?php echo $image['name']; ?>" width="300px" height="200px" /></label>
+					<label for="<?php echo $image['name']; ?>"><img class="img-thumbnail" src="<?php echo $link_image; ?>" alt="<?php echo $image['name']; ?>" /></label>
 				<?php endforeach; ?>
 				<p class="to_hide">Cacher</p>
 			</div>
@@ -101,6 +107,14 @@
 				<?php endforeach; ?>
 				</select>
 			</div>
+
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="c_tags">Tag</label>
+					<input type="text" value="<?php if (isset($c_tags)) echo $c_tags; echo set_value('c_tags'); ?>" name="c_tags" id="c_tags" class="form-control" />
+				</div>
+			</div>
+
 		</div>
 		<input type="submit" class="btn btn-success" value="<?php if ($page == 'add_content') echo 'Ajouter'; else echo 'Modifier'; ?>" />
 

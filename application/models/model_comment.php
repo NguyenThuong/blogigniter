@@ -44,7 +44,6 @@ class Model_comment extends CI_Model {
 		return $query;
 	}
 	
-	// Créer un commentaire
 	function create_comment($c_id, $com_nickname, $com_content)
 	{
 		$data = array(
@@ -57,14 +56,12 @@ class Model_comment extends CI_Model {
 		$this->db->insert('comment', $data);
 	}
 
-	// Supprimer un commentaire
 	function delete_comment($com_id)
 	{
 		$this->db->where('com_id', $com_id)
 				 ->delete('comment'); 
 	}
 
-	// Changement de statut
 	function update_comment($com_id, $com_status)
 	{
 		$data = array(

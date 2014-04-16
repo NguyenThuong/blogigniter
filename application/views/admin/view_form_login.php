@@ -53,7 +53,8 @@
 							<br/>
 							<br/>
 							<div class="row">
-								<div class="col-md-4 col-md-offset-10">
+								<div class="col-md-10 col-md-offset-2">
+									<a class="btn" class="col-md4" href="<?php echo base_url('admin/reset_password'); ?>">Mot de passe oublié</a>	
 									<input type="submit" value="Login" class="col-md-4 btn btn-lg btn-primary" />
 								</div>
 							</div>
@@ -63,7 +64,9 @@
 
 				</div><!-- end .main content -->
 			</div><!-- end .row -->
-			<p class="text-center"><a class="btn" href="<?php echo base_url(); ?>">Retourner sur le blog</a></p>
+			<p class="text-center">
+				<a class="btn" href="<?php echo base_url(); ?>">Retourner sur le blog</a>
+			</p>
 		</div> <!-- end .container -->
 
 	<?php 

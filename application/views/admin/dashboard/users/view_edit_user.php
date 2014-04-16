@@ -15,6 +15,11 @@
 	<?php endif; ?>
 
 	<div class="form-group">
+		<label for="u_email">Email :</label>
+		<input type="text" class="form-control" id="u_email" name="u_email" value="<?php if (isset($u_email)) echo $u_email; echo set_value('u_email'); ?>" required />
+	</div><!-- end .form-group -->	
+
+	<div class="form-group">
 		<label for="u_biography">Biographie :</label>
 		<input type="text" class="form-control" id="u_biography" name="u_biography" value="<?php if (isset($u_biography)) echo $u_biography; echo set_value('u_biography'); ?>" required />
 	</div><!-- end .form-group -->

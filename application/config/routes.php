@@ -1,104 +1,88 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-/*
-| -------------------------------------------------------------------------
-| URI ROUTING
-| -------------------------------------------------------------------------
-| This file lets you re-map URI requests to specific controller functions.
-|
-| Typically there is a one-to-one relationship between a URL string
-| and its corresponding controller class/method. The segments in a
-| URL normally follow this pattern:
-|
-|	example.com/class/method/id/
-|
-| In some instances, however, you may want to remap this relationship
-| so that a different class/function is called than the one
-| corresponding to the URL.
-|
-| Please see the user guide for complete details:
-|
-|	http://codeigniter.com/user_guide/general/routing.html
-|
-| -------------------------------------------------------------------------
-| RESERVED ROUTES
-| -------------------------------------------------------------------------
-|
-| There area two reserved routes:
-|
-|	$route['default_controller'] = 'welcome';
-|
-| This route indicates which controller class should be loaded if the
-| URI contains no data. In the above example, the "welcome" class
-| would be loaded.
-|
-|	$route['404_override'] = 'errors/page_missing';
-|
-| This route will tell the Router what URI segments to use if those provided
-| in the URL cannot be matched to a valid route.
-|
-*/
 
 $route['default_controller'] = 'front/blog';
 
 # 404
 //$route['erreur404'] 	= $route['default_controller'] . '/erreur404';
-$route['404_override'] = '';
+//$route['404_override'] = 'front/error404';
 
-#admin
-$route['admin']           = 'admin/admin';
-$route['admin/logout'] 	  = 'admin/admin/logout';
-$route['admin/dashboard'] = 'admin/dashboard';
+
+
+/*--------------- ADMIN ---------------*/
+
+# ADMIN (connection)
+$route['admin']				   = 'admin/admin';
+$route['admin/logout'] 		   = 'admin/admin/logout';
+$route['admin/reset_password'] = 'admin/admin/reset_password';
 
 # ADMIN content
-$route['admin/dashboard/edit'] 			= 'admin/dashboard/edit';
-$route['admin/dashboard/edit/(:num)'] 	= 'admin/dashboard/edit/$1';
-$route['admin/dashboard/delete/(:num)'] = 'admin/dashboard/delete/$1';
-$route['admin/dashboard/author']		= 'admin/dashboard/author';
-
-$route['admin/dashboard/author/(:num)'] = 'admin/dashboard/author/$1';
-$route['admin/dashboard/params']		= 'admin/dashboard/params';
-$route['admin/dashboard/search']		= 'admin/dashboard/search';
+$route['admin/content']				  = 'admin/content';
+$route['admin/content/edit']		  = 'admin/content/edit';
+$route['admin/content/edit/(:num)']   = 'admin/content/edit/$1';
+$route['admin/content/delete/(:num)'] = 'admin/content/delete/$1';
 
 # ADMIN rubric
-$route['admin/dashboard/rubric'] 			   = 'admin/dashboard/rubric';
-$route['admin/dashboard/edit_rubric'] 		   = 'admin/dashboard/edit_rubric';
-$route['admin/dashboard/edit_rubric/(:num)']   = 'admin/dashboard/edit_rubric/$1';
-$route['admin/dashboard/delete_rubric/(:num)'] = 'admin/dashboard/delete_rubric/$1';
+$route['admin/rubric']				 = 'admin/rubric';
+$route['admin/rubric/edit']			 = 'admin/rubric/edit';
+$route['admin/rubric/edit/(:num)']   = 'admin/rubric/edit/$1';
+$route['admin/rubric/delete/(:num)'] = 'admin/rubric/delete/$1';
+
+# ADMIN tags
+$route['admin/tags']			   = 'admin/tags';
+$route['admin/tags/edit']		   = 'admin/tags/edit';
+$route['admin/tags/edit/(:num)']   = 'admin/tags/edit/$1';
+$route['admin/tags/delete/(:num)'] = 'admin/tags/delete/$1';
+$route['admin/tags/content(:num)'] = 'admin/tags/$1';
 
 # ADMIN comments
-$route['admin/dashboard/comment']					 = 'admin/dashboard/comment';
-$route['admin/dashboard/moderate_comment/(:num)'] 	 = 'admin/dashboard/moderate_comment/$1';
-$route['admin/dashboard/desactivate_comment/(:num)'] = 'admin/dashboard/desactivate_comment/$1';
-$route['admin/dashboard/delete_comment/(:num)']		 = 'admin/dashboard/delete_comment/$1';
+$route['admin/comments']					= 'admin/comments';
+$route['admin/comments/moderate/(:num)']	= 'admin/comments/moderate/$1';
+$route['admin/comments/desactivate/(:num)'] = 'admin/comments/desactivate/$1';
+$route['admin/comments/delete/(:num)']		= 'admin/comments/delete/$1';
 
 # ADMIN users
-$route['admin/dashboard/users']				 = 'admin/dashboard/users';
-$route['admin/dashboard/edit_user']			 = 'admin/dashboard/edit_user';
-$route['admin/dashboard/edit_user/(:num)']	 = 'admin/dashboard/edit_user/$1';
-$route['admin/dashboard/delete_user/(:num)'] = 'admin/dashboard/delete_user/$1';
-$route['admin/dashboard/change_password']	 = 'admin/dashboard/change_password';
+$route['admin/user']				 = 'admin/user';
+$route['admin/user/edit']			 = 'admin/user/edit';
+$route['admin/user/edit/(:num)']	 = 'admin/user/edit/$1';
+$route['admin/user/delete/(:num)']   = 'admin/user/delete/$1';
+$route['admin/user/change_password'] = 'admin/user/change_password';
+$route['admin/user/(:num)']			 = 'admin/user/author/$1';
 
-$route['admin/dashboard/search']			 = 'admin/dashboard/search';
+# ADMIN media
+$route['admin/medias']		  = 'admin/medias';
+$route['admin/medias/upload'] = 'admin/medias/upload';
 
-# ADMIN gallery
-$route['admin/dashboard/gallery'] = 'admin/dashboard/gallery';
-$route['admin/dashboard/upload']  = 'admin/dashboard/upload';
+# ADMIN params
+$route['admin/params'] = 'admin/params';
+$route['admin/search'] = 'admin/params/search';
 
-# RSS
+
+
+/*--------------- FRONT ---------------*/
+
+# FRONT contact
+$route['contact'] = 'front/contact';
+$route['toto'] = 'front/blog/toto';
+
+# FRONT RSS
 $route['rss'] = "front/feed";
 
-# Search
+# FRONT Search
 $route['s'] = $route['default_controller'] . '/search';
 
+# FRONT Author
 $route['auteur/(:any)'] = $route['default_controller'] . '/auteur/$1';
 
-# pagination home
+# FRONT Tag
+$route['t'] = $route['default_controller'] . '/tags';
+
+# FRONT Pagination home
 $route['page/(:num)'] 	= $route['default_controller'] . '/index/$1';
 
-# rubrique
+# FRONT Rubric
 $route['(:any)']        = $route['default_controller'] . '/view/$1';
 
-# rubrique + content
+# FRONT Rubric + Content
 $route['(:any)/(:any)'] = $route['default_controller'] . '/view/$1/$2';
 
 

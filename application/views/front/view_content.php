@@ -2,9 +2,19 @@
 			<div class="caption">
 				<p class="row">
 					<span class="col-md-2">
-						<i class="glyphicon glyphicon-tag"></i> <a href="<?=base_url($r_url_rw);?>"><?php echo $r_title; ?></a>
+						<i class="glyphicon glyphicon-tag"></i> <?php echo rubric_url($r_url_rw, $r_title); ?>
 					</span>
-					<span class="col-md-3 col-md-offset-7 text-right">
+					<?php if (!empty($tags['0'])): ?>
+					<span class="col-md-3 col-md-offset-2">
+						<i class="glyphicon glyphicon-tags"></i>&nbsp;
+						<?php 
+							foreach ($tags as $tag):
+								echo tag_url($tag);
+							endforeach;
+						?>
+					</span>
+					<?php endif; ?>
+					<span class="col-md-3 col-md-offset-2 text-right">
 						<i class="glyphicon glyphicon-calendar"></i> 
 						<em><?php echo date_fr(date("d", strtotime($c_cdate)), date("m", strtotime($c_cdate)), date("Y", strtotime($c_cdate))); ?></em>
 					</span>
@@ -16,11 +26,18 @@
 				</p>
 
 				<?php if ($c_image): ?>
-					<img src="<?php echo $c_image; ?>" alt="" class="img-responsive" style="margin: 0 auto;" width="280px" heigth="120px" />
+					<?php echo img_thumb($c_image); ?>
+					<br />
 				<?php endif; ?>
 				<?php echo $c_content; ?>
-				<br />
-				<br />
+
+				<?php if (!empty($twitter)): ?>
+					<br />
+					<a href="https://twitter.com/share" class="twitter-share-button" data-via="<?php echo $twitter; ?>" data-lang="fr">Tweeter</a>
+					<script>
+					!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+					</script>
+				<?php endif; ?>
 
 			</div><!-- end of .caption -->
 		</article><!-- end of .thumbnail -->
@@ -116,22 +133,22 @@
 			echo form_open('');
 		?>
 
-		<div class="form-group">
-			<label for="com_nickname">Pseudo :</label>
-			<input type="text" class="form-control" id="com_nickname" name="com_nickname" value="<?php if (isset($com_nickname)) echo $com_nickname; echo set_value('com_nickname'); ?>" required />
-		</div><!-- end .form-group -->
+			<div class="form-group">
+				<label for="com_nickname">Pseudo :</label>
+				<input type="text" class="form-control" id="com_nickname" name="com_nickname" value="<?php if (isset($com_nickname)) echo $com_nickname; echo set_value('com_nickname'); ?>" required />
+			</div><!-- end .form-group -->
 
-		<div class="form-group">
-			<label for="com_content">Contenu :</label>
-			<textarea type="text" id="com_content" class="form-control" name="com_content" required><?php if (isset($com_content)) echo $com_content; echo set_value('com_content'); ?></textarea>
-		</div><!-- end .form-group -->
+			<div class="form-group">
+				<label for="com_content">Contenu :</label>
+				<textarea type="text" id="com_content" class="form-control" name="com_content" required><?php if (isset($com_content)) echo $com_content; echo set_value('com_content'); ?></textarea>
+			</div><!-- end .form-group -->
 
-		<div class="form-group">
-			<label for="captcha">Captcha <?php echo $captcha_image; ?></label>
-			<input type="text" class="form-control" id="captcha" name="captcha" value="" required />
-		</div><!-- end .form-group -->
+			<div class="form-group">
+				<label for="captcha">Captcha <?php echo $captcha_image; ?></label>
+				<input type="text" class="form-control" id="captcha" name="captcha" value="" required />
+			</div><!-- end .form-group -->
 
 
-		<input type="submit" class="btn btn-default" value="Envoyer" />
+			<input type="submit" class="btn btn-success" value="Envoyer" />
 
 		</form>
